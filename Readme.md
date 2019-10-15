@@ -17,4 +17,5 @@ http.onload = () => console.log(http.responseText)
 };
 
 mw.InstHistory
+Object.values(mw.AllRows).map((v,i)=>{namee[i]=v.l18;console.log(v.l18)})
 
