@@ -15,3 +15,6 @@ http.send()
 
 http.onload = () => console.log(http.responseText)
 };
+
+mw.InstHistory
+
