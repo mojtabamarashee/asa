@@ -19,6 +19,7 @@ http.onload = () => console.log(http.responseText)
 mw.InstHistory
 Object.values(mw.AllRows).map((v,i)=>{namee[i]=v.l18;console.log(v.l18)})
 
+```
 (function(console){
 
     console.save = function(data, filename){
@@ -45,4 +46,57 @@ Object.values(mw.AllRows).map((v,i)=>{namee[i]=v.l18;console.log(v.l18)})
         a.dispatchEvent(e)
     }
 })(console)
+```
+
+
+```
+const fs = require('fs');
+let rawdata = fs.readFileSync('mw.txt');
+let mw1 = JSON.parse(rawdata);
+let name = [];
+let allRows = Object.values(mw1.AllRows);
+let instHistory = Object.values(mw1.InstHistory);
+let keys = Object.keys(mw1.InstHistory);
+let ct = Object.values(mw1.ClientType);
+Object.values(mw1.AllRows).findIndex((v, i) => {
+	name[i] = v.l18;
+});
+let f = name.findIndex(v => v.match('ددام'));
+let insCode = allRows[f].inscode;
+let index = keys.findIndex(v => v == insCode);
+let hist = instHistory[index];
+keys.map((v, i) => {
+	index = allRows.findIndex((v1, i1) => {
+		return v1.inscode == v;
+	});
+	if (index != -1) {
+		allRows[index].hist = instHistory[i];
+	}
+});
+
+allRows.map((v, i) => {
+	v.per = [];
+	v.perSum = [];
+	for (let j = 0; j < v.hist.length; j++) {
+		if (j == 0) {
+			v.per[0] = ((v.pc - v.hist[0].PDrCotVal) / v.hist[0].PDrCotVal) * 100;
+			v.perSum[0] = v.per[0];
+		} else {
+			v.per[j] = ((v.hist[j - 1].PDrCotVal - v.hist[j].PDrCotVal) / v.hist[j].PDrCotVal) * 100;
+			v.perSum[j] = ((v.pc - v.hist[j - 1].PDrCotVal) / v.hist[j - 1].PDrCotVal) * 100;
+			//v.perSum[j] = v.per[j] + v.per[j - 1];
+		}
+		v.per[j] = Math.round(v.per[j] * 100) / 100;
+		v.perSum[j] = Math.round(v.perSum[j] * 100) / 100;
+	}
+});
+
+var file = fs.createWriteStream('per.txt');
+file.write(allRows[f].perSum[0] + ',' + allRows[f].pc + '\n');
+allRows.map((v, i) => {
+	let minPerSum = Math.min(...v.perSum);
+	if (minPerSum < -50) file.write(v.l18 + ',' + minPerSum + '\n');
+});
+file.end();
+```
 
