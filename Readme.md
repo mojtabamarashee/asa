@@ -5,6 +5,8 @@ https://online.agah.com/TradingView/marks?symbol=IRO1AZIN0001-1&from=1004158800&
 https://online.agah.com/TradingView/marks?symbol=IRO1AZIN0001-1&from=1259470800&to=2114368200&resolution=D
 https://online.agah.com/TradingView/history?symbol=IRO1BMLT0001-1&resolution=D&from=1247122718&to=1251259199&symbolType=%D8%B3%D9%87%D8%A7%D9%85
 https://online.agah.com/TradingView/symbols?symbol=IRO1BMLT0001-1
+
+```
 function test(){
     
 console.log("salam")
@@ -18,6 +20,7 @@ http.onload = () => console.log(http.responseText)
 
 mw.InstHistory
 Object.values(mw.AllRows).map((v,i)=>{namee[i]=v.l18;console.log(v.l18)})
+```
 
 ```
 (function(console){
