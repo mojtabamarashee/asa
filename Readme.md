@@ -6,7 +6,7 @@ https://online.agah.com/TradingView/marks?symbol=IRO1AZIN0001-1&from=1259470800&
 https://online.agah.com/TradingView/history?symbol=IRO1BMLT0001-1&resolution=D&from=1247122718&to=1251259199&symbolType=%D8%B3%D9%87%D8%A7%D9%85
 https://online.agah.com/TradingView/symbols?symbol=IRO1BMLT0001-1
 
-```
+```javascript
 function test(){
     
 console.log("salam")
@@ -22,7 +22,7 @@ mw.InstHistory
 Object.values(mw.AllRows).map((v,i)=>{namee[i]=v.l18;console.log(v.l18)})
 ```
 
-```
+```javascript
 (function(console){
 
     console.save = function(data, filename){
@@ -52,7 +52,7 @@ Object.values(mw.AllRows).map((v,i)=>{namee[i]=v.l18;console.log(v.l18)})
 ```
 
 
-```
+```javascript
 const fs = require('fs');
 let rawdata = fs.readFileSync('mw.txt');
 let mw1 = JSON.parse(rawdata);
