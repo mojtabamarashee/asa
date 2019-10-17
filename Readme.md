@@ -48,6 +48,7 @@ http.onload = () => console.log(http.responseText)
         a.dispatchEvent(e)
     }
 })(console)
+console.save(mw, "mw.txt")
 ```
 
 
