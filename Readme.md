@@ -114,36 +114,29 @@ function Navasan1D(alR) {
   out.v = [];
   out.change = [];
   let cntr = 0;
+  let change;
   alR.map((v, i) => {
-    let change = Math.round(((v.pmax - v.pmin) / v.pmin) * 100 * 100) / 100;
-    //if (v.l18.match(/^([^0-9]*)$/)) {
-    // if (Math.abs(change) > 4 && v.pl == v.pmin) {
-    out.v[cntr] = v;
-    out.change[cntr] = change;
-    cntr++;
-    //}
-    //}
+    if (v.pmin == 0) {
+      change = 0;
+    } else {
+      change = Math.round(((v.pmax - v.pmin) / v.pmin) * 100 * 100) / 100;
+      if (v.l18.match(/^([^0-9]*)$/)) {
+        //if (v.l18.match(/^([^0-9]*)$/)) {
+        // if (Math.abs(change) > 4 && v.pl == v.pmin) {
+        out.v[cntr] = v;
+        out.change[cntr] = change;
+        cntr++;
+      }
+    }
   });
   return out;
 }
 
 let o = Navasan1D(allRows);
 var file = fs.createWriteStream('Navasan1D.txt');
+file.write('نماد' + '\t' + 'تغییر' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 o.v.forEach((v, i) => {
-  file.write(
-    v.l18 +
-      ' , ' +
-      o.change[i] +
-      ' , ' +
-      v.flow +
-      ' , ' +
-      v.pe +
-      ' , ' +
-      Math.min(...v.perSum) +
-      ' , ' +
-      v.cs +
-      '\n',
-  );
+  file.write(v.l18 + '\t' + o.change[i] + '\t' + v.flow + '\t' + v.cs + '\n');
 });
 
 var file = fs.createWriteStream('per.txt');
@@ -235,6 +228,33 @@ allRows.forEach((v, i) => {
   }
 });
 file.end();
+
+function SafeForoush() {
+  let o = [];
+  o = allRows.filter(
+    (v, i) => Math.round(v.po1) == Math.round(v.tmin) && v.qd1 == 0,
+  );
+  return o;
+}
+o = SafeForoush();
+var file = fs.createWriteStream('sell.txt');
+file.write('نماد' + '\t' + 'تعداد' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
+o.forEach((v, i) => {
+  if (v.l18.match(/^([^0-9]*)$/)) {
+    file.write(v.l18 + '\t' + v.qo1 + '\t' + v.flow + '\t' + v.cs + '\n');
+  }
+});
+
+var file = fs.createWriteStream('pe.txt');
+file.write('نماد' + '\t' + 'p/e' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
+allRows.forEach((v, i) => {
+  if (v.l18.match(/^([^0-9]*)$/)) {
+    if (v.pe) {
+      file.write(v.l18 + '\t' + v.pe + '\t' + v.flow + '\t' + v.cs + '\n');
+    }
+  }
+});
+
 
 ```
 
