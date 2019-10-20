@@ -35,9 +35,11 @@ function test() {
 		a.dispatchEvent(e);
 	};
 })(console);
-console.save(mw, 'mw.txt');
+//console.save(mw, 'mw.txt');
 
 const fs = require('fs');
+var numeral = require('numeral');
+numeral.defaultFormat('0,0.[00]');
 let rawdata = fs.readFileSync('mw.txt');
 let mw1 = JSON.parse(rawdata);
 let name = [];
@@ -65,17 +67,19 @@ keys.map((v, i) => {
 allRows.map((v, i) => {
 	v.per = [];
 	v.perSum = [];
-	for (let j = 0; j < v.hist.length; j++) {
-		if (j == 0) {
-			v.per[0] = ((v.pl - v.hist[0].PDrCotVal) / v.hist[0].PDrCotVal) * 100;
-			v.perSum[0] = v.per[0];
-		} else {
-			v.per[j] = ((v.hist[j - 1].PDrCotVal - v.hist[j].PDrCotVal) / v.hist[j].PDrCotVal) * 100;
-			v.perSum[j] = ((v.pl - v.hist[j - 1].PDrCotVal) / v.hist[j - 1].PDrCotVal) * 100;
-			//v.perSum[j] = v.per[j] + v.per[j - 1];
+	if (v.hist) {
+		for (let j = 0; j < v.hist.length; j++) {
+			if (j == 0) {
+				v.per[0] = ((v.pl - v.hist[0].PDrCotVal) / v.hist[0].PDrCotVal) * 100;
+				v.perSum[0] = v.per[0];
+			} else {
+				v.per[j] = ((v.hist[j - 1].PDrCotVal - v.hist[j].PDrCotVal) / v.hist[j].PDrCotVal) * 100;
+				v.perSum[j] = ((v.pl - v.hist[j - 1].PDrCotVal) / v.hist[j - 1].PDrCotVal) * 100;
+				//v.perSum[j] = v.per[j] + v.per[j - 1];
+			}
+			v.per[j] = Math.round(v.per[j] * 100) / 100;
+			v.perSum[j] = Math.round(v.perSum[j] * 100) / 100;
 		}
-		v.per[j] = Math.round(v.per[j] * 100) / 100;
-		v.perSum[j] = Math.round(v.perSum[j] * 100) / 100;
 	}
 });
 
@@ -200,7 +204,7 @@ function CalculateRSI(hist) {
 
 var file = fs.createWriteStream('rsi.txt');
 allRows.forEach((v, i) => {
-	if (v.hist[50]) {
+	if (v.hist && v.hist[50]) {
 		if (v.l18.match(/^([^0-9]*)$/)) {
 			let rsi = CalculateRSI(v.hist);
 			file.write(v.l18 + ' , ' + rsi + '\n');
@@ -215,16 +219,19 @@ function SafeForoush() {
 	return o;
 }
 o = SafeForoush();
+o.sort((a, b) => a.qo1 - b.qo1);
 var file = fs.createWriteStream('sell.txt');
-file.write('نماد' + '\t' + 'تعداد' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
+file.write('نماد' + '\t' + 'حجم فروش' + '\t' + 'تعداد فروشنده' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 o.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
-		file.write(v.l18 + '\t' + v.qo1 + '\t' + v.flow + '\t' + v.cs + '\n');
+		file.write(v.l18 + '\t' + numeral(v.qo1).format() + '\t' + v.zo1 + '\t' + v.flow + '\t' + v.cs + '\n');
 	}
 });
 
 var file = fs.createWriteStream('pe.txt');
 file.write('نماد' + '\t' + 'p/e' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
+
+allRows.sort((a, b) => a.cs - b.cs);
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		if (v.pe) {
@@ -232,3 +239,6 @@ allRows.forEach((v, i) => {
 		}
 	}
 });
+
+
+
