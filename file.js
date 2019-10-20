@@ -241,4 +241,18 @@ allRows.forEach((v, i) => {
 });
 
 
+function SafeKharid() {
+	let o = [];
+	o = allRows.filter((v, i) => Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0);
+	return o;
+}
 
+o = SafeKharid();
+o.sort((a, b) => a.qd1 - b.qd1);
+var file = fs.createWriteStream('buy.txt');
+file.write('نماد' + '\t' + 'حجم' + '\t' + 'تعداد' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
+o.forEach((v, i) => {
+	if (v.l18.match(/^([^0-9]*)$/)) {
+		file.write(v.l18 + '\t' + numeral(v.qd1).format() + '\t' + v.zd1 + '\t' + v.flow + '\t' + v.cs + '\n');
+	}
+});
