@@ -1,3 +1,4 @@
+date = '98_07_29';
 function test() {
 	console.log('salam');
 	const http = new XMLHttpRequest();
@@ -40,10 +41,9 @@ function test() {
 const fs = require('fs');
 var numeral = require('numeral');
 numeral.defaultFormat('0,0.[00]');
-let rawdata = fs.readFileSync('mw_98_07_28.txt');
+let rawdata = fs.readFileSync('mw_' + date + '.txt');
 let mw1 = JSON.parse(rawdata);
 let allRows = Object.values(mw1.AllRows);
-
 
 let instHistory = Object.values(mw1.InstHistory);
 let keys = Object.keys(mw1.InstHistory);
@@ -57,7 +57,6 @@ keys.map((v, i) => {
 	}
 });
 
-
 let clientType = Object.values(mw1.ClientType);
 keys = Object.keys(mw1.ClientType);
 keys.map((v, i) => {
@@ -69,9 +68,6 @@ keys.map((v, i) => {
 	}
 });
 
-
-
-
 let name = [];
 Object.values(mw1.AllRows).findIndex((v, i) => {
 	name[i] = v.l18;
@@ -81,8 +77,6 @@ console.log('f = ', f);
 let insCode = allRows[f].inscode;
 index = keys.findIndex(v => v == insCode);
 let hist = instHistory[index];
-
-
 
 allRows.map((v, i) => {
 	v.per = [];
@@ -137,7 +131,7 @@ function Navasan1D(alR) {
 }
 
 let o = Navasan1D(allRows);
-var file = fs.createWriteStream('Navasan1D.txt');
+var file = fs.createWriteStream('Nav1D' + date + '.txt');
 file.write('نماد' + '\t' + 'تغییر' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 o.v.forEach((v, i) => {
 	file.write(v.l18 + '\t' + o.change[i] + '\t' + v.flow + '\t' + v.cs + '\n');
@@ -240,7 +234,7 @@ function SafeForoush() {
 }
 o = SafeForoush();
 o.sort((a, b) => a.qo1 - b.qo1);
-var file = fs.createWriteStream('sell.txt');
+var file = fs.createWriteStream('sell' + date + '.txt');
 file.write('نماد' + '\t' + 'حجم فروش' + '\t' + 'تعداد فروشنده' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 o.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
@@ -248,7 +242,7 @@ o.forEach((v, i) => {
 	}
 });
 
-var file = fs.createWriteStream('pe.txt');
+var file = fs.createWriteStream('pe' + date + '.txt');
 file.write('نماد' + '\t' + 'p/e' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 
 allRows.sort((a, b) => a.cs - b.cs);
@@ -260,7 +254,6 @@ allRows.forEach((v, i) => {
 	}
 });
 
-
 function SafeKharid() {
 	let o = [];
 	o = allRows.filter((v, i) => Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0);
@@ -269,7 +262,7 @@ function SafeKharid() {
 
 o = SafeKharid();
 o.sort((a, b) => a.qd1 - b.qd1);
-var file = fs.createWriteStream('buy.txt');
+var file = fs.createWriteStream('buy' + date + '.txt');
 file.write('نماد' + '\t' + 'حجم' + '\t' + 'تعداد' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 o.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
@@ -277,15 +270,37 @@ o.forEach((v, i) => {
 	}
 });
 
-
 allRows.sort((a, b) => a.ct.Buy_CountN - b.ct.Buy_CountN);
-var file = fs.createWriteStream('ct_98_07_28.txt');
+var file = fs.createWriteStream('ct_' + date + '.txt');
 file.write('نماد' + '\t' + 'حجم' + '\n');
 allRows.forEach((v, i) => {
-
-    if (v.l18.match(/^([^0-9]*)$/)) {
-        if(v.ct.Buy_CountN)
-        file.write(v.l18 + '\t' + numeral(v.ct.Buy_N_Volume).format()  + '\t' + numeral(v.ct.Buy_CountN).format() + '\n');
-    }
+	if (v.l18.match(/^([^0-9]*)$/)) {
+		if (v.ct.Buy_CountN)
+			file.write(
+				v.l18 + '\t' + numeral(v.ct.Buy_N_Volume).format() + '\t' + numeral(v.ct.Buy_CountN).format() + '\n',
+			);
+	}
 });
+
+let Write = (fileName, tiltle, header, data) =>{
+    var file = fs.createWriteStream(fileName + '.txt');
+    file.write(title + '\n' + '\n' + '\n');
+    title.forEach((v,i)=>{
+        file.write(v + '\t');
+    })
+    file.write('\n');
+    let cntr = 0;
+    data[0].forEach((v, i)=>{
+       file.write(data[0][i]); 
+       file.write('\t');
+
+       file.write(data[0][i]); 
+       file.write('\t');
+
+       file.write(data[0][i]); 
+       file.write('\t');
+    })
+}
+
+
 
