@@ -40,21 +40,14 @@ function test() {
 const fs = require('fs');
 var numeral = require('numeral');
 numeral.defaultFormat('0,0.[00]');
-let rawdata = fs.readFileSync('mw.txt');
+let rawdata = fs.readFileSync('mw_98_07_28.txt');
 let mw1 = JSON.parse(rawdata);
-let name = [];
 let allRows = Object.values(mw1.AllRows);
+
+
 let instHistory = Object.values(mw1.InstHistory);
 let keys = Object.keys(mw1.InstHistory);
-let ct = Object.values(mw1.ClientType);
-Object.values(mw1.AllRows).findIndex((v, i) => {
-	name[i] = v.l18;
-});
-let f = name.findIndex(v => v.match('فسا'));
-console.log('f = ', f);
-let insCode = allRows[f].inscode;
-let index = keys.findIndex(v => v == insCode);
-let hist = instHistory[index];
+let index;
 keys.map((v, i) => {
 	index = allRows.findIndex((v1, i1) => {
 		return v1.inscode == v;
@@ -63,6 +56,33 @@ keys.map((v, i) => {
 		allRows[index].hist = instHistory[i];
 	}
 });
+
+
+let clientType = Object.values(mw1.ClientType);
+keys = Object.keys(mw1.ClientType);
+keys.map((v, i) => {
+	index = allRows.findIndex((v1, i1) => {
+		return v1.inscode == v;
+	});
+	if (index != -1) {
+		allRows[index].ct = clientType[i];
+	}
+});
+
+
+
+
+let name = [];
+Object.values(mw1.AllRows).findIndex((v, i) => {
+	name[i] = v.l18;
+});
+let f = name.findIndex(v => v.match('فسا'));
+console.log('f = ', f);
+let insCode = allRows[f].inscode;
+index = keys.findIndex(v => v == insCode);
+let hist = instHistory[index];
+
+
 
 allRows.map((v, i) => {
 	v.per = [];
@@ -256,3 +276,16 @@ o.forEach((v, i) => {
 		file.write(v.l18 + '\t' + numeral(v.qd1).format() + '\t' + v.zd1 + '\t' + v.flow + '\t' + v.cs + '\n');
 	}
 });
+
+
+allRows.sort((a, b) => a.ct.Buy_CountN - b.ct.Buy_CountN);
+var file = fs.createWriteStream('ct_98_07_28.txt');
+file.write('نماد' + '\t' + 'حجم' + '\n');
+allRows.forEach((v, i) => {
+
+    if (v.l18.match(/^([^0-9]*)$/)) {
+        if(v.ct.Buy_CountN)
+        file.write(v.l18 + '\t' + numeral(v.ct.Buy_N_Volume).format()  + '\t' + numeral(v.ct.Buy_CountN).format() + '\n');
+    }
+});
+
