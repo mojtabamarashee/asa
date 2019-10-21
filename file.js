@@ -131,8 +131,9 @@ function Navasan1D(alR) {
 }
 
 let o = Navasan1D(allRows);
-var file = fs.createWriteStream('Nav1D' + date + '.txt');
+var file = fs.createWriteStream('Nav1D_' + date + '.txt');
 file.write('نماد' + '\t' + 'تغییر' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
+o.v.sort((a, b) => a.change - b.change);
 o.v.forEach((v, i) => {
 	file.write(v.l18 + '\t' + o.change[i] + '\t' + v.flow + '\t' + v.cs + '\n');
 });
@@ -234,15 +235,15 @@ function SafeForoush() {
 }
 o = SafeForoush();
 o.sort((a, b) => a.qo1 - b.qo1);
-var file = fs.createWriteStream('sell' + date + '.txt');
-file.write('نماد' + '\t' + 'حجم فروش' + '\t' + 'تعداد فروشنده' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
+var file = fs.createWriteStream('sell_' + date + '.txt');
+file.write('نماد' + '\t' + 'حجم' + '\t' + 'تعداد' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 o.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		file.write(v.l18 + '\t' + numeral(v.qo1).format() + '\t' + v.zo1 + '\t' + v.flow + '\t' + v.cs + '\n');
 	}
 });
 
-var file = fs.createWriteStream('pe' + date + '.txt');
+var file = fs.createWriteStream('pe_' + date + '.txt');
 file.write('نماد' + '\t' + 'p/e' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 
 allRows.sort((a, b) => a.cs - b.cs);
@@ -262,7 +263,7 @@ function SafeKharid() {
 
 o = SafeKharid();
 o.sort((a, b) => a.qd1 - b.qd1);
-var file = fs.createWriteStream('buy' + date + '.txt');
+var file = fs.createWriteStream('buy_' + date + '.txt');
 file.write('نماد' + '\t' + 'حجم' + '\t' + 'تعداد' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 o.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
@@ -282,25 +283,22 @@ allRows.forEach((v, i) => {
 	}
 });
 
-let Write = (fileName, tiltle, header, data) =>{
-    var file = fs.createWriteStream(fileName + '.txt');
-    file.write(title + '\n' + '\n' + '\n');
-    title.forEach((v,i)=>{
-        file.write(v + '\t');
-    })
-    file.write('\n');
-    let cntr = 0;
-    data[0].forEach((v, i)=>{
-       file.write(data[0][i]); 
-       file.write('\t');
+let Write = (fileName, tiltle, header, data) => {
+	var file = fs.createWriteStream(fileName + '.txt');
+	file.write(title + '\n' + '\n' + '\n');
+	title.forEach((v, i) => {
+		file.write(v + '\t');
+	});
+	file.write('\n');
+	let cntr = 0;
+	data[0].forEach((v, i) => {
+		file.write(data[0][i]);
+		file.write('\t');
 
-       file.write(data[0][i]); 
-       file.write('\t');
+		file.write(data[0][i]);
+		file.write('\t');
 
-       file.write(data[0][i]); 
-       file.write('\t');
-    })
-}
-
-
-
+		file.write(data[0][i]);
+		file.write('\t');
+	});
+};
