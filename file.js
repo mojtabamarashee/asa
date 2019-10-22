@@ -1,4 +1,4 @@
-date = '98_07_29';
+date = '98_07_30';
 function test() {
 	console.log('salam');
 	const http = new XMLHttpRequest();
@@ -38,10 +38,34 @@ function test() {
 })(console);
 //console.save(mw, 'mw.txt');
 
+htmlHeader = `
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 5px;
+  text-align: left;    
+}
+</style>
+<html>
+<body>
+<meta charset="UTF-8">
+<table>
+`
+htmlTail = `
+</table>
+</body>
+</html>
+`
+
+
 const fs = require('fs');
+GetColor = (num) => (num * 10).toString(16);
 var numeral = require('numeral');
 numeral.defaultFormat('0,0.[00]');
-let rawdata = fs.readFileSync('mw_' + date + '.txt');
+let rawdata = fs.readFileSync('files/mw_' + date + '.txt');
 let mw1 = JSON.parse(rawdata);
 let allRows = Object.values(mw1.AllRows);
 
@@ -221,8 +245,8 @@ var file = fs.createWriteStream('rsi.txt');
 allRows.forEach((v, i) => {
 	if (v.hist && v.hist[50]) {
 		if (v.l18.match(/^([^0-9]*)$/)) {
-			let rsi = CalculateRSI(v.hist);
-			file.write(v.l18 + ' , ' + rsi + '\n');
+			//let rsi = CalculateRSI(v.hist);
+			//file.write(v.l18 + ' , ' + rsi + '\n');
 		}
 	}
 });
@@ -235,13 +259,17 @@ function SafeForoush() {
 }
 o = SafeForoush();
 o.sort((a, b) => a.qo1 - b.qo1);
-var file = fs.createWriteStream('sell_' + date + '.txt');
-file.write('نماد' + '\t' + 'حجم' + '\t' + 'تعداد' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
+var file = fs.createWriteStream('sell_' + date + '.html');
+file.write(htmlHeader);
+file.write('<tr><th>نماد</th>' + '\n' + '<th>حجم</th>' + '\n' + '<th>تعداد</th>' + '\n' + '<th>بازار</th>' + '\n' + '<th>گروه</th></tr>' + '\n');
 o.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
-		file.write(v.l18 + '\t' + numeral(v.qo1).format() + '\t' + v.zo1 + '\t' + v.flow + '\t' + v.cs + '\n');
+        color = GetColor(v.cs);
+		file.write('<tr><td>' + v.l18 + '</td>' + '\n<td>' + numeral(v.qo1).format() + '</td>\n<td>' + v.zo1 + '</td>\n<td>' + v.flow + '</td><td style="color:#' + color + '">' + v.cs + '</td>\n</tr>');
 	}
 });
+file.write(htmlTail);
+file.end();
 
 var file = fs.createWriteStream('pe_' + date + '.txt');
 file.write('نماد' + '\t' + 'p/e' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
@@ -263,25 +291,33 @@ function SafeKharid() {
 
 o = SafeKharid();
 o.sort((a, b) => a.qd1 - b.qd1);
-var file = fs.createWriteStream('buy_' + date + '.txt');
-file.write('نماد' + '\t' + 'حجم' + '\t' + 'تعداد' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
+var file = fs.createWriteStream('buy_' + date + '.html');
+file.write(htmlHeader);
+file.write('<tr>' +'<th>نماد</th>' + '<th>حجم</th>' + '<th>تعداد</th>' + '<th>بازار</th>' + '<th>گروه</th></tr>\n');
 o.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
-		file.write(v.l18 + '\t' + numeral(v.qd1).format() + '\t' + v.zd1 + '\t' + v.flow + '\t' + v.cs + '\n');
+        color = GetColor(v.cs);
+        console.log("color = ", color);
+		file.write('<tr><td>' +v.l18.toString() + '</td><td>' + numeral(v.qd1).format() + '</td><td>' + v.zd1 + '</td><td>' + v.flow + '</td><td style="color:#' + color + '">' + v.cs +'</td></tr>\n');
 	}
 });
+file.write(htmlTail);
+file.end();
 
 allRows.sort((a, b) => a.ct.Buy_CountN - b.ct.Buy_CountN);
-var file = fs.createWriteStream('ct_' + date + '.txt');
-file.write('نماد' + '\t' + 'حجم' + '\n');
+var file = fs.createWriteStream('ct_' + date + '.html');
+file.write(htmlHeader);
+file.write('<tr><th>نماد</th>' + '\n<th>' + 'حجم</th>' + '\n<th>' + 'تعداد</th>' + '</tr>\n');
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		if (v.ct.Buy_CountN)
 			file.write(
-				v.l18 + '\t' + numeral(v.ct.Buy_N_Volume).format() + '\t' + numeral(v.ct.Buy_CountN).format() + '\n',
+				'<tr><td>' + v.l18 + '</td>\n<td>' + numeral(v.ct.Buy_N_Volume).format() + '</td>\n<td>' + numeral(v.ct.Buy_CountN).format() + '</td>\n</tr>',
 			);
 	}
 });
+file.write(htmlTail);
+file.end();
 
 let Write = (fileName, tiltle, header, data) => {
 	var file = fs.createWriteStream(fileName + '.txt');
@@ -302,3 +338,4 @@ let Write = (fileName, tiltle, header, data) => {
 		file.write('\t');
 	});
 };
+
