@@ -39,30 +39,47 @@ function test() {
 //console.save(mw, 'mw.txt');
 
 htmlHeader = `
-<style>
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
-th, td {
-  padding: 5px;
-  text-align: left;    
-}
-</style>
+<!DOCTYPE html>
 <html>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"/></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"/></script>
+<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"/></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+<style>
+div.dataTables_wrapper {
+        width: 800px;
+        margin: 0 auto;
+    }
+</style>
 <body>
 <meta charset="UTF-8">
-<table>
-`
+<table id="table" class="table table-striped table-bordered display nowrap" style="width:100%, font-family:'Courier New', Courier, monospace; font-size:250%" >
+`;
 htmlTail = `
+</tbody>
 </table>
+
+<script type="application/javascript" >
+$(document).ready(function() {
+    $('#table').DataTable( {
+        "order": [[ 3, "desc" ]],
+    "scrollX":true,
+        "pageLength": 100,
+    } );
+} );
+</script>
+</br>
+</br>
+<span>دانلود از <a href="https://telegram.me/filtermarket1">کانال تلگرام </a></span>
 </body>
 </html>
-`
-
+`;
 
 const fs = require('fs');
-GetColor = (num) => (num * 10).toString(16);
+GetColor = num => (num * 10).toString(16);
 var numeral = require('numeral');
 numeral.defaultFormat('0,0.[00]');
 let rawdata = fs.readFileSync('files/mw_' + date + '.txt');
@@ -97,7 +114,6 @@ Object.values(mw1.AllRows).findIndex((v, i) => {
 	name[i] = v.l18;
 });
 let f = name.findIndex(v => v.match('فسا'));
-console.log('f = ', f);
 let insCode = allRows[f].inscode;
 index = keys.findIndex(v => v == insCode);
 let hist = instHistory[index];
@@ -261,11 +277,37 @@ o = SafeForoush();
 o.sort((a, b) => a.qo1 - b.qo1);
 var file = fs.createWriteStream('sell_' + date + '.html');
 file.write(htmlHeader);
-file.write('<tr><th>نماد</th>' + '\n' + '<th>حجم</th>' + '\n' + '<th>تعداد</th>' + '\n' + '<th>بازار</th>' + '\n' + '<th>گروه</th></tr>' + '\n');
+file.write(
+	'<tr><th>نماد</th>' +
+		'\n' +
+		'<th>حجم</th>' +
+		'\n' +
+		'<th>تعداد</th>' +
+		'\n' +
+		'<th>بازار</th>' +
+		'\n' +
+		'<th>گروه</th></tr>' +
+		'\n',
+);
 o.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
-        color = GetColor(v.cs);
-		file.write('<tr><td>' + v.l18 + '</td>' + '\n<td>' + numeral(v.qo1).format() + '</td>\n<td>' + v.zo1 + '</td>\n<td>' + v.flow + '</td><td style="color:#' + color + '">' + v.cs + '</td>\n</tr>');
+		color = GetColor(v.cs);
+		file.write(
+			'<tr><td>' +
+				v.l18 +
+				'</td>' +
+				'\n<td>' +
+				numeral(v.qo1).format() +
+				'</td>\n<td>' +
+				v.zo1 +
+				'</td>\n<td>' +
+				v.flow +
+				'</td><td style="color:#' +
+				color +
+				'">' +
+				v.cs +
+				'</td>\n</tr>',
+		);
 	}
 });
 file.write(htmlTail);
@@ -291,14 +333,34 @@ function SafeKharid() {
 
 o = SafeKharid();
 o.sort((a, b) => a.qd1 - b.qd1);
-var file = fs.createWriteStream('buy_' + date + '.html');
+var file = fs.createWriteStream('out/buy_' + date + '.html');
 file.write(htmlHeader);
-file.write('<tr>' +'<th>نماد</th>' + '<th>حجم</th>' + '<th>تعداد</th>' + '<th>بازار</th>' + '<th>گروه</th></tr>\n');
+file.write(
+	'<thead><tr>' +
+		'<th>نماد</th>' +
+		'<th>حجم</th>' +
+		'<th>تعداد</th>' +
+		'<th>بازار</th>' +
+		'<th>گروه</th></tr></thead><tbody>\n',
+);
 o.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
-        color = GetColor(v.cs);
-        console.log("color = ", color);
-		file.write('<tr><td>' +v.l18.toString() + '</td><td>' + numeral(v.qd1).format() + '</td><td>' + v.zd1 + '</td><td>' + v.flow + '</td><td style="color:#' + color + '">' + v.cs +'</td></tr>\n');
+		color = GetColor(v.cs);
+		file.write(
+			'<tr><td>' +
+				v.l18 +
+				'</td><td>' +
+				numeral(v.qd1).format() +
+				'</td><td>' +
+				v.zd1 +
+				'</td><td>' +
+				v.flow +
+				'</td><td style="color:#' +
+				color +
+				'">' +
+				v.cs +
+				'</td></tr>\n',
+		);
 	}
 });
 file.write(htmlTail);
@@ -312,7 +374,13 @@ allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		if (v.ct.Buy_CountN)
 			file.write(
-				'<tr><td>' + v.l18 + '</td>\n<td>' + numeral(v.ct.Buy_N_Volume).format() + '</td>\n<td>' + numeral(v.ct.Buy_CountN).format() + '</td>\n</tr>',
+				'<tr><td>' +
+					v.l18 +
+					'</td>\n<td>' +
+					numeral(v.ct.Buy_N_Volume).format() +
+					'</td>\n<td>' +
+					numeral(v.ct.Buy_CountN).format() +
+					'</td>\n</tr>',
 			);
 	}
 });
@@ -338,4 +406,3 @@ let Write = (fileName, tiltle, header, data) => {
 		file.write('\t');
 	});
 };
-

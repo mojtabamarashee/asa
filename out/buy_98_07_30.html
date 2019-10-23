@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"/></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"/></script>
+<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"/></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+<style>
+div.dataTables_wrapper {
+        width: 800px;
+        margin: 0 auto;
+    }
+</style>
+<body>
+<meta charset="UTF-8">
+<table id="table" class="table table-striped table-bordered display nowrap" style="width:100%, font-family:'Courier New', Courier, monospace; font-size:250%" >
+<thead><tr><th>نماد</th><th>حجم</th><th>تعداد</th><th>بازار</th><th>گروه</th></tr></thead><tbody>
+<tr><td>قاسم</td><td>100</td><td>1</td><td>2</td><td style="color:#1d6">47</td></tr>
+<tr><td>سيستم</td><td>200</td><td>1</td><td>1</td><td style="color:#2d0">72</td></tr>
+<tr><td>قمرو</td><td>263</td><td>1</td><td>1</td><td style="color:#17c">38</td></tr>
+<tr><td>وگستر</td><td>287</td><td>1</td><td>2</td><td style="color:#230">56</td></tr>
+<tr><td>رويش</td><td>400</td><td>4</td><td>2</td><td style="color:#2a8">68</td></tr>
+<tr><td>ارفع</td><td>400</td><td>1</td><td>2</td><td style="color:#10e">27</td></tr>
+<tr><td>كالا</td><td>400</td><td>1</td><td>1</td><td style="color:#29e">67</td></tr>
+<tr><td>غدام</td><td>502</td><td>7</td><td>1</td><td style="color:#1a4">42</td></tr>
+<tr><td>لخانه</td><td>577</td><td>1</td><td>4</td><td style="color:#122">29</td></tr>
+<tr><td>دسينا</td><td>650</td><td>1</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>كايتا</td><td>724</td><td>1</td><td>4</td><td style="color:#21c">54</td></tr>
+<tr><td>قصفها</td><td>1,100</td><td>2</td><td>1</td><td style="color:#17c">38</td></tr>
+<tr><td>زفكا</td><td>1,205</td><td>3</td><td>2</td><td style="color:#a">01</td></tr>
+<tr><td>فمراد</td><td>1,296</td><td>1</td><td>1</td><td style="color:#10e">27</td></tr>
+<tr><td>دپارس</td><td>1,461</td><td>5</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>قپيرا</td><td>1,976</td><td>2</td><td>1</td><td style="color:#17c">38</td></tr>
+<tr><td>كمنگنز</td><td>2,752</td><td>4</td><td>1</td><td style="color:#82">13</td></tr>
+<tr><td>وكار</td><td>2,953</td><td>2</td><td>1</td><td style="color:#23a">57</td></tr>
+<tr><td>كسرام</td><td>3,000</td><td>1</td><td>1</td><td style="color:#21c">54</td></tr>
+<tr><td>قهكمت</td><td>3,600</td><td>3</td><td>1</td><td style="color:#17c">38</td></tr>
+<tr><td>ورازي</td><td>3,628</td><td>1</td><td>4</td><td style="color:#294">66</td></tr>
+<tr><td>تايرا</td><td>4,044</td><td>8</td><td>1</td><td style="color:#122">29</td></tr>
+<tr><td>حآسا</td><td>4,255</td><td>2</td><td>2</td><td style="color:#258">60</td></tr>
+<tr><td>پشاهن</td><td>5,000</td><td>1</td><td>4</td><td style="color:#fa">25</td></tr>
+<tr><td>وپارس</td><td>5,606</td><td>5</td><td>1</td><td style="color:#23a">57</td></tr>
+<tr><td>سصوفي</td><td>6,329</td><td>1</td><td>1</td><td style="color:#212">53</td></tr>
+<tr><td>فسرب</td><td>7,097</td><td>5</td><td>1</td><td style="color:#10e">27</td></tr>
+<tr><td>كيميا</td><td>8,251</td><td>10</td><td>2</td><td style="color:#10e">27</td></tr>
+<tr><td>ولملت</td><td>8,380</td><td>5</td><td>1</td><td style="color:#244">58</td></tr>
+<tr><td>قزوين</td><td>8,683</td><td>8</td><td>1</td><td style="color:#17c">38</td></tr>
+<tr><td>زشگزا</td><td>9,235</td><td>15</td><td>2</td><td style="color:#a">01</td></tr>
+<tr><td>دكيمي</td><td>11,000</td><td>5</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>دعبيد</td><td>11,206</td><td>23</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>ستران</td><td>11,659</td><td>2</td><td>1</td><td style="color:#212">53</td></tr>
+<tr><td>بكاب</td><td>11,896</td><td>15</td><td>1</td><td style="color:#136">31</td></tr>
+<tr><td>سبجنو</td><td>12,564</td><td>6</td><td>1</td><td style="color:#212">53</td></tr>
+<tr><td>قشكر</td><td>12,821</td><td>6</td><td>1</td><td style="color:#17c">38</td></tr>
+<tr><td>بپاس</td><td>14,960</td><td>9</td><td>2</td><td style="color:#294">66</td></tr>
+<tr><td>سمتاز</td><td>14,991</td><td>3</td><td>4</td><td style="color:#212">53</td></tr>
+<tr><td>تفيرو</td><td>15,195</td><td>4</td><td>4</td><td style="color:#122">29</td></tr>
+<tr><td>غبهنوش</td><td>15,718</td><td>10</td><td>1</td><td style="color:#1a4">42</td></tr>
+<tr><td>وپخش</td><td>16,245</td><td>17</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>غاذر</td><td>16,662</td><td>4</td><td>1</td><td style="color:#1a4">42</td></tr>
+<tr><td>غويتا</td><td>17,452</td><td>19</td><td>2</td><td style="color:#1a4">42</td></tr>
+<tr><td>شاملا</td><td>18,790</td><td>11</td><td>1</td><td style="color:#1b8">44</td></tr>
+<tr><td>هجرت</td><td>19,231</td><td>31</td><td>2</td><td style="color:#1ae">43</td></tr>
+<tr><td>غيوان</td><td>19,421</td><td>6</td><td>4</td><td style="color:#1a4">42</td></tr>
+<tr><td>خعمرا</td><td>22,486</td><td>11</td><td>4</td><td style="color:#154">34</td></tr>
+<tr><td>سخوز</td><td>22,954</td><td>3</td><td>1</td><td style="color:#212">53</td></tr>
+<tr><td>سكرما</td><td>23,231</td><td>1</td><td>1</td><td style="color:#212">53</td></tr>
+<tr><td>ما</td><td>27,861</td><td>3</td><td>1</td><td style="color:#294">66</td></tr>
+<tr><td>اپرداز</td><td>27,964</td><td>4</td><td>2</td><td style="color:#2da">73</td></tr>
+<tr><td>ساروم</td><td>28,000</td><td>1</td><td>1</td><td style="color:#212">53</td></tr>
+<tr><td>وثخوز</td><td>28,082</td><td>7</td><td>4</td><td style="color:#2bc">70</td></tr>
+<tr><td>خموتورح</td><td>28,611</td><td>11</td><td>1</td><td style="color:#154">34</td></tr>
+<tr><td>شفا</td><td>28,917</td><td>11</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>وارس</td><td>29,057</td><td>2</td><td>4</td><td style="color:#28a">65</td></tr>
+<tr><td>دتماد</td><td>32,061</td><td>9</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>غگرجي</td><td>37,508</td><td>19</td><td>1</td><td style="color:#1a4">42</td></tr>
+<tr><td>بترانس</td><td>44,074</td><td>6</td><td>1</td><td style="color:#136">31</td></tr>
+<tr><td>پارس</td><td>45,781</td><td>7</td><td>1</td><td style="color:#1b8">44</td></tr>
+<tr><td>دكپسول</td><td>48,862</td><td>21</td><td>2</td><td style="color:#1ae">43</td></tr>
+<tr><td>ريشمك</td><td>49,124</td><td>9</td><td>2</td><td style="color:#1ae">43</td></tr>
+<tr><td>غالبر</td><td>50,000</td><td>1</td><td>1</td><td style="color:#1a4">42</td></tr>
+<tr><td>درهآور</td><td>51,329</td><td>32</td><td>2</td><td style="color:#1ae">43</td></tr>
+<tr><td>وآفري</td><td>54,296</td><td>2</td><td>4</td><td style="color:#294">66</td></tr>
+<tr><td>شگل</td><td>55,534</td><td>25</td><td>1</td><td style="color:#1b8">44</td></tr>
+<tr><td>وسبحان</td><td>58,137</td><td>8</td><td>2</td><td style="color:#230">56</td></tr>
+<tr><td>هاي وب</td><td>58,216</td><td>13</td><td>1</td><td style="color:#2da">73</td></tr>
+<tr><td>شپاكسا</td><td>59,031</td><td>17</td><td>1</td><td style="color:#1b8">44</td></tr>
+<tr><td>غمينو</td><td>61,950</td><td>11</td><td>2</td><td style="color:#1a4">42</td></tr>
+<tr><td>خموتور</td><td>63,636</td><td>11</td><td>1</td><td style="color:#154">34</td></tr>
+<tr><td>چفيبر</td><td>65,872</td><td>8</td><td>1</td><td style="color:#c8">20</td></tr>
+<tr><td>غشهداب</td><td>69,035</td><td>17</td><td>2</td><td style="color:#1a4">42</td></tr>
+<tr><td>غپآذر</td><td>72,363</td><td>20</td><td>2</td><td style="color:#1a4">42</td></tr>
+<tr><td>ديران</td><td>75,000</td><td>16</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>حرهشا</td><td>77,628</td><td>5</td><td>4</td><td style="color:#258">60</td></tr>
+<tr><td>غديس</td><td>84,585</td><td>8</td><td>2</td><td style="color:#1a4">42</td></tr>
+<tr><td>سفار</td><td>88,857</td><td>8</td><td>1</td><td style="color:#212">53</td></tr>
+<tr><td>البرز</td><td>95,404</td><td>5</td><td>1</td><td style="color:#294">66</td></tr>
+<tr><td>فالوم</td><td>96,765</td><td>5</td><td>4</td><td style="color:#10e">27</td></tr>
+<tr><td>خفولا</td><td>97,435</td><td>22</td><td>4</td><td style="color:#2e4">74</td></tr>
+<tr><td>فبستم</td><td>98,219</td><td>8</td><td>4</td><td style="color:#118">28</td></tr>
+<tr><td>شتهران</td><td>100,705</td><td>10</td><td>4</td><td style="color:#1ae">43</td></tr>
+<tr><td>غشهد</td><td>105,535</td><td>19</td><td>1</td><td style="color:#1a4">42</td></tr>
+<tr><td>بتك</td><td>111,045</td><td>17</td><td>4</td><td style="color:#136">31</td></tr>
+<tr><td>دلر</td><td>122,009</td><td>50</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>شوينده</td><td>127,505</td><td>28</td><td>1</td><td style="color:#1b8">44</td></tr>
+<tr><td>شپاس</td><td>128,121</td><td>10</td><td>2</td><td style="color:#e6">23</td></tr>
+<tr><td>پارسيان</td><td>143,613</td><td>5</td><td>1</td><td style="color:#294">66</td></tr>
+<tr><td>واتي</td><td>148,422</td><td>10</td><td>1</td><td style="color:#230">56</td></tr>
+<tr><td>كاسپين</td><td>158,830</td><td>84</td><td>2</td><td style="color:#1ae">43</td></tr>
+<tr><td>غبشهر</td><td>158,930</td><td>32</td><td>1</td><td style="color:#1a4">42</td></tr>
+<tr><td>بكام</td><td>161,797</td><td>18</td><td>1</td><td style="color:#136">31</td></tr>
+<tr><td>دبالك</td><td>162,146</td><td>17</td><td>2</td><td style="color:#1ae">43</td></tr>
+<tr><td>فسپا</td><td>164,461</td><td>10</td><td>1</td><td style="color:#10e">27</td></tr>
+<tr><td>ملت</td><td>165,416</td><td>11</td><td>1</td><td style="color:#294">66</td></tr>
+<tr><td>زكشت</td><td>171,549</td><td>42</td><td>2</td><td style="color:#a">01</td></tr>
+<tr><td>دكوثر</td><td>179,769</td><td>28</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>ددام</td><td>186,253</td><td>28</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>گكوثر</td><td>195,873</td><td>50</td><td>2</td><td style="color:#226">55</td></tr>
+<tr><td>دتوليد</td><td>202,401</td><td>31</td><td>2</td><td style="color:#1ae">43</td></tr>
+<tr><td>توريل</td><td>207,875</td><td>24</td><td>2</td><td style="color:#258">60</td></tr>
+<tr><td>رتاپ</td><td>216,589</td><td>21</td><td>1</td><td style="color:#2d0">72</td></tr>
+<tr><td>وبهمن</td><td>230,898</td><td>20</td><td>1</td><td style="color:#230">56</td></tr>
+<tr><td>نتوس</td><td>237,886</td><td>170</td><td>4</td><td style="color:#aa">17</td></tr>
+<tr><td>دسانكو</td><td>269,180</td><td>13</td><td>2</td><td style="color:#1ae">43</td></tr>
+<tr><td>ودي</td><td>295,187</td><td>21</td><td>2</td><td style="color:#294">66</td></tr>
+<tr><td>تيپيكو</td><td>297,290</td><td>19</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>فجوش</td><td>303,000</td><td>7</td><td>4</td><td style="color:#118">28</td></tr>
+<tr><td>دسبحا</td><td>303,946</td><td>50</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>كسرا</td><td>305,215</td><td>46</td><td>1</td><td style="color:#21c">54</td></tr>
+<tr><td>وتوصا</td><td>309,956</td><td>43</td><td>1</td><td style="color:#230">56</td></tr>
+<tr><td>حتايد</td><td>318,373</td><td>9</td><td>1</td><td style="color:#258">60</td></tr>
+<tr><td>قاروم</td><td>361,300</td><td>13</td><td>4</td><td style="color:#17c">38</td></tr>
+<tr><td>غشان</td><td>389,038</td><td>167</td><td>1</td><td style="color:#1a4">42</td></tr>
+<tr><td>سمگا</td><td>424,475</td><td>58</td><td>2</td><td style="color:#226">55</td></tr>
+<tr><td>كباده</td><td>463,146</td><td>21</td><td>4</td><td style="color:#21c">54</td></tr>
+<tr><td>والبر</td><td>465,294</td><td>41</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>خودرو</td><td>482,247</td><td>57</td><td>1</td><td style="color:#154">34</td></tr>
+<tr><td>تبرك</td><td>482,980</td><td>19</td><td>2</td><td style="color:#1a4">42</td></tr>
+<tr><td>شفارس</td><td>530,070</td><td>18</td><td>1</td><td style="color:#1b8">44</td></tr>
+<tr><td>دسبحان</td><td>545,681</td><td>50</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>غنوش</td><td>552,168</td><td>183</td><td>1</td><td style="color:#1a4">42</td></tr>
+<tr><td>نوري</td><td>685,316</td><td>87</td><td>1</td><td style="color:#1b8">44</td></tr>
+<tr><td>دامين</td><td>705,396</td><td>143</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>ساروج</td><td>726,089</td><td>25</td><td>4</td><td style="color:#212">53</td></tr>
+<tr><td>وتعاون</td><td>742,282</td><td>32</td><td>4</td><td style="color:#294">66</td></tr>
+<tr><td>ولساپا</td><td>758,297</td><td>19</td><td>1</td><td style="color:#244">58</td></tr>
+<tr><td>وسكاب</td><td>907,529</td><td>71</td><td>1</td><td style="color:#230">56</td></tr>
+<tr><td>دفارا</td><td>955,046</td><td>204</td><td>1</td><td style="color:#1ae">43</td></tr>
+<tr><td>فاما</td><td>995,471</td><td>46</td><td>1</td><td style="color:#118">28</td></tr>
+<tr><td>شپترو</td><td>1,032,281</td><td>29</td><td>4</td><td style="color:#1b8">44</td></tr>
+<tr><td>فاذر</td><td>1,091,955</td><td>170</td><td>1</td><td style="color:#118">28</td></tr>
+<tr><td>چنوپا</td><td>1,315,000</td><td>27</td><td>4</td><td style="color:#c8">20</td></tr>
+<tr><td>فايرا</td><td>1,526,331</td><td>39</td><td>1</td><td style="color:#10e">27</td></tr>
+<tr><td>آسيا</td><td>1,585,701</td><td>104</td><td>1</td><td style="color:#294">66</td></tr>
+<tr><td>فاراك</td><td>1,719,638</td><td>93</td><td>1</td><td style="color:#118">28</td></tr>
+<tr><td>نبروج</td><td>1,852,539</td><td>50</td><td>1</td><td style="color:#aa">17</td></tr>
+<tr><td>حفاري</td><td>2,211,800</td><td>45</td><td>1</td><td style="color:#6e">11</td></tr>
+<tr><td>بجهرم</td><td>2,247,336</td><td>191</td><td>2</td><td style="color:#190">40</td></tr>
+<tr><td>قشير</td><td>2,490,931</td><td>275</td><td>2</td><td style="color:#17c">38</td></tr>
+<tr><td>ذوب</td><td>3,220,766</td><td>129</td><td>2</td><td style="color:#10e">27</td></tr>
+<tr><td>فنرژي</td><td>3,242,941</td><td>82</td><td>4</td><td style="color:#118">28</td></tr>
+<tr><td>فباهنر</td><td>3,725,151</td><td>227</td><td>1</td><td style="color:#10e">27</td></tr>
+<tr><td>دتوزيع</td><td>3,957,264</td><td>1848</td><td>2</td><td style="color:#1ae">43</td></tr>
+<tr><td>بايكا</td><td>4,279,084</td><td>143</td><td>4</td><td style="color:#136">31</td></tr>
+<tr><td>دانا</td><td>4,381,838</td><td>186</td><td>1</td><td style="color:#294">66</td></tr>
+<tr><td>خبازرس</td><td>7,468,948</td><td>199</td><td>4</td><td style="color:#2c6">71</td></tr>
+<tr><td>وسالت</td><td>9,642,195</td><td>200</td><td>4</td><td style="color:#23a">57</td></tr>
+<tr><td>خپارس</td><td>16,615,086</td><td>255</td><td>1</td><td style="color:#154">34</td></tr>
+<tr><td>كوير</td><td>43,322,173</td><td>1950</td><td>1</td><td style="color:#10e">27</td></tr>
+
+</tbody>
+</table>
+
+<script type="application/javascript" >
+$(document).ready(function() {
+    $('#table').DataTable( {
+        "order": [[ 3, "desc" ]],
+    "scrollX":true,
+        "pageLength": 100,
+    } );
+} );
+</script>
+</br>
+</br>
+<span>دانلود از <a href="https://telegram.me/filtermarket1">کانال تلگرام </a></span>
+</body>
+</html>
