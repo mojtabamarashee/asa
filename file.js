@@ -1,4 +1,4 @@
-date = '98_07_30';
+date = '98_08_01';
 function test() {
 	console.log('salam');
 	const http = new XMLHttpRequest();
@@ -49,10 +49,6 @@ htmlHeader = `
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
 <style>
-div.dataTables_wrapper {
-        width: 800px;
-        margin: 0 auto;
-    }
 </style>
 <body>
 <meta charset="UTF-8">
@@ -65,8 +61,7 @@ htmlTail = `
 <script type="application/javascript" >
 $(document).ready(function() {
     $('#table').DataTable( {
-        "order": [[ 3, "desc" ]],
-    "scrollX":true,
+        "order": [[ 0, "desc" ]],
         "pageLength": 100,
     } );
 } );
@@ -275,10 +270,10 @@ function SafeForoush() {
 }
 o = SafeForoush();
 o.sort((a, b) => a.qo1 - b.qo1);
-var file = fs.createWriteStream('sell_' + date + '.html');
+var file = fs.createWriteStream('out/sell_' + date + '.html');
 file.write(htmlHeader);
 file.write(
-	'<tr><th>نماد</th>' +
+	'<thead><tr><th>نماد</th>' +
 		'\n' +
 		'<th>حجم</th>' +
 		'\n' +
@@ -286,7 +281,7 @@ file.write(
 		'\n' +
 		'<th>بازار</th>' +
 		'\n' +
-		'<th>گروه</th></tr>' +
+		'<th>گروه</th></tr></thead><tbody>' +
 		'\n',
 );
 o.forEach((v, i) => {
@@ -313,7 +308,7 @@ o.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
-var file = fs.createWriteStream('pe_' + date + '.txt');
+var file = fs.createWriteStream('out/pe_' + date + '.txt');
 file.write('نماد' + '\t' + 'p/e' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 
 allRows.sort((a, b) => a.cs - b.cs);
@@ -367,9 +362,9 @@ file.write(htmlTail);
 file.end();
 
 allRows.sort((a, b) => a.ct.Buy_CountN - b.ct.Buy_CountN);
-var file = fs.createWriteStream('ct_' + date + '.html');
+var file = fs.createWriteStream('out/ct_' + date + '.html');
 file.write(htmlHeader);
-file.write('<tr><th>نماد</th>' + '\n<th>' + 'حجم</th>' + '\n<th>' + 'تعداد</th>' + '</tr>\n');
+file.write('<thead><tr><th>نماد</th>' + '\n<th>' + 'حجم</th>' + '\n<th>' + 'تعداد</th>' + '</tr></thead><tbody>\n');
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		if (v.ct.Buy_CountN)
@@ -388,7 +383,7 @@ file.write(htmlTail);
 file.end();
 
 let Write = (fileName, tiltle, header, data) => {
-	var file = fs.createWriteStream(fileName + '.txt');
+	var file = fs.createWriteStream(fileName + '.html');
 	file.write(title + '\n' + '\n' + '\n');
 	title.forEach((v, i) => {
 		file.write(v + '\t');

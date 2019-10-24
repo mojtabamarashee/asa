@@ -9,10 +9,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
 <style>
-div.dataTables_wrapper {
-        width: 800px;
-        margin: 0 auto;
-    }
 </style>
 <body>
 <meta charset="UTF-8">
@@ -178,7 +174,6 @@ div.dataTables_wrapper {
 $(document).ready(function() {
     $('#table').DataTable( {
         "order": [[ 3, "desc" ]],
-    "scrollX":true,
         "pageLength": 100,
     } );
 } );
