@@ -361,6 +361,52 @@ o.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
+
+
+var file = fs.createWriteStream('out/1wBaz_' + date + '.html');
+file.write(htmlHeader);
+file.write(
+	'<thead><tr>' +
+		'<th>نماد</th>' +
+		'<th>بازده</th>' +
+		'<th>بازار</th>' +
+		'<th>گروه</th></tr></thead><tbody>\n',
+);
+allRows.forEach((v, i) => {
+	if (v.l18.match(/^([^0-9]*)$/)) {
+        if(v.hist.length > 30 && v.hist[5].PDrCotVal > 0)
+		color = GetColor(v.cs);
+		file.write(
+			'<tr><td>' +
+				v.l18 +
+				'</td><td>' +
+				numeral((v.pl - v.hist[5].PDrCotVal) / v.hist[5].PDrCotVal * 100).format() +
+				'</td><td>' +
+				v.flow +
+				'</td><td style="color:#' +
+				color +
+				'">' +
+				v.cs +
+				'</td></tr>\n',
+		);
+	}
+});
+file.write(htmlTail);
+file.end();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 allRows.sort((a, b) => a.ct.Buy_CountN - b.ct.Buy_CountN);
 var file = fs.createWriteStream('out/ct_' + date + '.html');
 file.write(htmlHeader);
