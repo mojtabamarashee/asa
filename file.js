@@ -273,7 +273,7 @@ function SafeForoush() {
 }
 o = SafeForoush();
 o.sort((a, b) => a.qo1 - b.qo1);
-var file = fs.createWriteStream('out/sell_' + date + '.html');
+var file = fs.createWriteStream('out' + date + '/sell_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr><th>نماد</th>' +
@@ -323,7 +323,7 @@ o.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
-var file = fs.createWriteStream('out/pe_' + date + '.txt');
+var file = fs.createWriteStream('out' + date +  '/pe_' + date + '.txt');
 file.write('نماد' + '\t' + 'p/e' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 
 allRows.sort((a, b) => a.cs - b.cs);
@@ -343,7 +343,7 @@ function SafeKharid() {
 
 o = SafeKharid();
 o.sort((a, b) => a.qd1 - b.qd1);
-var file = fs.createWriteStream('out/buy_' + date + '.html');
+var file = fs.createWriteStream('out' + date + '/buy_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' +
@@ -389,7 +389,7 @@ o.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
-var file = fs.createWriteStream('out/1wBaz_' + date + '.html');
+var file = fs.createWriteStream('out' + date + '/1wBaz_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' + '<th>نماد</th>' + '<th>بازده</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
@@ -418,7 +418,7 @@ file.write(htmlTail);
 file.end();
 
 allRows.sort((a, b) => a.ct.Buy_CountN - b.ct.Buy_CountN);
-var file = fs.createWriteStream('out/ct_' + date + '.html');
+var file = fs.createWriteStream('out' + date + '/ct_' + date + '.html');
 file.write(htmlHeader);
 file.write('<thead><tr><th>نماد</th>' + '\n<th>' + 'حجم</th>' + '\n<th>' + 'تعداد</th>' + '</tr></thead><tbody>\n');
 allRows.forEach((v, i) => {
@@ -492,7 +492,7 @@ function getGzipped(url, callback) {
 var http = require('http');
 zlib = require('zlib');
 
-var file = fs.createWriteStream('out/body_' + date + '.html');
+var file = fs.createWriteStream('out' + date + '/body_' + date + '.html');
 let globalI = 0;
 function GetSymbolsPage() {
 	allRows.forEach((v, i) => {
@@ -547,7 +547,7 @@ function GetSymbolsData() {
 }
 GetSymbolsData();
 
-var file = fs.createWriteStream('out/floatVal_' + date + '.html');
+var file = fs.createWriteStream('out' + date + '/floatVal_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' +
