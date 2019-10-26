@@ -1,4 +1,4 @@
-date = '98_08_01';
+date = '98_08_04';
 function test() {
 	console.log('salam');
 	const http = new XMLHttpRequest();
@@ -68,7 +68,9 @@ $(document).ready(function() {
 </script>
 </br>
 </br>
-<span>دانلود از <a href="https://telegram.me/filtermarket1">کانال تلگرام </a></span>
+<span style="font-family:'Courier New', Courier, monospace; font-size:100%">دانلود از <a style="font-family:'Courier New', Courier, monospace; font-size:100%" href="https://telegram.me/filtermarket1">کانال تلگرام </a></span>
+</br>
+</br>
 </body>
 </html>
 `;
@@ -361,51 +363,33 @@ o.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
-
-
 var file = fs.createWriteStream('out/1wBaz_' + date + '.html');
 file.write(htmlHeader);
 file.write(
-	'<thead><tr>' +
-		'<th>نماد</th>' +
-		'<th>بازده</th>' +
-		'<th>بازار</th>' +
-		'<th>گروه</th></tr></thead><tbody>\n',
+	'<thead><tr>' + '<th>نماد</th>' + '<th>بازده</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
 );
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
-        if(v.hist.length > 30 && v.hist[5].PDrCotVal > 0)
-		color = GetColor(v.cs);
-		file.write(
-			'<tr><td>' +
-				v.l18 +
-				'</td><td>' +
-				numeral((v.pl - v.hist[5].PDrCotVal) / v.hist[5].PDrCotVal * 100).format() +
-				'</td><td>' +
-				v.flow +
-				'</td><td style="color:#' +
-				color +
-				'">' +
-				v.cs +
-				'</td></tr>\n',
-		);
+		if (v.hist) {
+			if (v.hist.length > 30 && v.hist[5].PDrCotVal > 0) color = GetColor(v.cs);
+			file.write(
+				'<tr><td>' +
+					v.l18 +
+					'</td><td>' +
+					numeral(((v.pl - v.hist[5].PDrCotVal) / v.hist[5].PDrCotVal) * 100).format() +
+					'</td><td>' +
+					v.flow +
+					'</td><td style="color:#' +
+					color +
+					'">' +
+					v.cs +
+					'</td></tr>\n',
+			);
+		}
 	}
 });
 file.write(htmlTail);
 file.end();
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 allRows.sort((a, b) => a.ct.Buy_CountN - b.ct.Buy_CountN);
 var file = fs.createWriteStream('out/ct_' + date + '.html');
@@ -447,3 +431,127 @@ let Write = (fileName, tiltle, header, data) => {
 		file.write('\t');
 	});
 };
+
+function getGzipped(url, callback) {
+	// buffer to store the streamed decompression
+	var buffer = [];
+
+	var options = {
+		host: 'www.tsetmc.com',
+		path: '/loader.aspx?ParTree=151311&i=' + url,
+	};
+	http.get(options, function(res) {
+		// pipe the response into the gunzip to decompress
+		var gunzip = zlib.createGunzip();
+		res.pipe(gunzip);
+
+		gunzip
+			.on('data', function(data) {
+				// decompression chunk ready, add it to the buffer
+				buffer.push(data.toString());
+			})
+			.on('end', function() {
+				// response and decompression complete, join the buffer and return
+
+				callback(null, buffer.join(''));
+			})
+			.on('error', function(e) {
+				callback(e);
+			});
+	}).on('error', function(e) {
+		callback(e);
+	});
+}
+
+var http = require('http');
+zlib = require('zlib');
+
+var file = fs.createWriteStream('out/body_' + date + '.html');
+let globalI = 0;
+function GetSymbolsPage() {
+	allRows.forEach((v, i) => {
+		console.log('i', i);
+		getGzipped(v.inscode, function(err, data) {
+			var regex = /LVal18AFC='(.*)',D/g;
+			console.log('globalI = ', globalI);
+			globalI++;
+			if (data) {
+				file.write(data + '\n\n\n');
+			}
+		});
+	});
+}
+
+function GetSymbolsData() {
+	let name = [];
+	let floatVal = [];
+    let insCode = [];
+	let cntr = 0;
+
+	//let body = fs.readFileSync('files/body_' + date + '.html');
+	let body = fs.readFileSync('body' + '.html').toString();
+
+	var regex = /LVal18AFC='(.*?)',D/g;
+	match = regex.exec(body);
+	cntr = 0;
+	while (match != null) {
+		name[cntr++] = match[1];
+		match = regex.exec(body);
+	}
+
+	var regex = /,KAjCapValCpsIdx='(.*?)',P/g;
+	cntr = 0;
+	match = regex.exec(body);
+	while (match != null) {
+		floatVal[cntr++] = match[1];
+		if (match[1]) {
+		}
+		match = regex.exec(body);
+	}
+
+
+	var regex = /,InsCode='(.*?)',B/g;
+	cntr = 0;
+	match = regex.exec(body);
+	while (match != null) {
+	    insCode[cntr++] = match[1];
+		match = regex.exec(body);
+	}
+    allRows.forEach((v,i)=>{
+        index = insCode.findIndex(v1 => v1 == v.inscode);
+        console.log("index = ", index);
+        allRows[i].floatVal = floatVal[index];
+    })
+}
+GetSymbolsData();
+
+
+
+var file = fs.createWriteStream('out/floatVal' + date + '.html');
+file.write(htmlHeader);
+file.write(
+	'<thead><tr>' + '<th>نماد</th>' + '<th>شناوری</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
+);
+allRows.forEach((v, i) => {
+	if (v.l18.match(/^([^0-9]*)$/)) {
+		if (v.floatVal) {
+			color = GetColor(v.cs);
+			file.write(
+				'<tr><td>' +
+					v.l18 +
+					'</td><td>' +
+				    v.floatVal	+ 
+					'</td><td>' +
+					v.flow +
+					'</td><td style="color:#' +
+					color +
+					'">' +
+					v.cs +
+					'</td></tr>\n',
+			);
+		}
+	}
+});
+file.write(htmlTail);
+file.end();
+
