@@ -26,7 +26,7 @@ https://online.agah.com/TradingView/marks?symbol=IRO1AZIN0001-1&from=1537678800&
 	};
 })(console);
 console.save(mw, 'mw.txt');
-'''
+```
 
 ```javascript
 function getGzipped(url, callback) {
