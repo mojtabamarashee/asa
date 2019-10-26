@@ -52,6 +52,7 @@ htmlHeader = `
 </style>
 <body>
 <meta charset="UTF-8">
+<br>
 <table id="table" class="table table-striped table-bordered display nowrap" style="width:100%, font-family:'Courier New', Courier, monospace; font-size:250%" >
 `;
 htmlTail = `
@@ -283,7 +284,10 @@ file.write(
 		'\n' +
 		'<th>بازار</th>' +
 		'\n' +
-		'<th>گروه</th></tr></thead><tbody>' +
+		'<th>گروه</th>' + 
+		'<th>سهامیاب</th>' +
+		'<th>tsetmc</th>' +
+        '</tr></thead><tbody>' +
 		'\n',
 );
 o.forEach((v, i) => {
@@ -303,7 +307,16 @@ o.forEach((v, i) => {
 				color +
 				'">' +
 				v.cs +
-				'</td>\n</tr>',
+				'</td><td>' +
+				'<a href="https://www.sahamyab.com/hashtag/' +
+				v.l18 +
+				'/post">سهامیاب</a>' +
+
+				'</td><td>' +
+				'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
+				v.inscode + '">tsetmc</a>' +
+
+				'</td></tr>\n',
 		);
 	}
 });
@@ -338,7 +351,10 @@ file.write(
 		'<th>حجم</th>' +
 		'<th>تعداد</th>' +
 		'<th>بازار</th>' +
-		'<th>گروه</th></tr></thead><tbody>\n',
+		'<th>گروه</th>' +
+		'<th>سهامیاب</th>' +
+		'<th>tsetmc</th>' +
+		'</tr></thead><tbody>\n',
 );
 o.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
@@ -356,6 +372,16 @@ o.forEach((v, i) => {
 				color +
 				'">' +
 				v.cs +
+
+				'</td><td>' +
+				'<a href="https://www.sahamyab.com/hashtag/' +
+				v.l18 +
+				'/post">سهامیاب</a>' +
+
+				'</td><td>' +
+				'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
+				v.inscode + '">tsetmc</a>' +
+
 				'</td></tr>\n',
 		);
 	}
@@ -470,10 +496,8 @@ var file = fs.createWriteStream('out/body_' + date + '.html');
 let globalI = 0;
 function GetSymbolsPage() {
 	allRows.forEach((v, i) => {
-		console.log('i', i);
 		getGzipped(v.inscode, function(err, data) {
 			var regex = /LVal18AFC='(.*)',D/g;
-			console.log('globalI = ', globalI);
 			globalI++;
 			if (data) {
 				file.write(data + '\n\n\n');
@@ -485,7 +509,7 @@ function GetSymbolsPage() {
 function GetSymbolsData() {
 	let name = [];
 	let floatVal = [];
-    let insCode = [];
+	let insCode = [];
 	let cntr = 0;
 
 	//let body = fs.readFileSync('files/body_' + date + '.html');
@@ -509,28 +533,30 @@ function GetSymbolsData() {
 		match = regex.exec(body);
 	}
 
-
 	var regex = /,InsCode='(.*?)',B/g;
 	cntr = 0;
 	match = regex.exec(body);
 	while (match != null) {
-	    insCode[cntr++] = match[1];
+		insCode[cntr++] = match[1];
 		match = regex.exec(body);
 	}
-    allRows.forEach((v,i)=>{
-        index = insCode.findIndex(v1 => v1 == v.inscode);
-        console.log("index = ", index);
-        allRows[i].floatVal = floatVal[index];
-    })
+	allRows.forEach((v, i) => {
+		index = insCode.findIndex(v1 => v1 == v.inscode);
+		allRows[i].floatVal = floatVal[index];
+	});
 }
 GetSymbolsData();
 
-
-
-var file = fs.createWriteStream('out/floatVal' + date + '.html');
+var file = fs.createWriteStream('out/floatVal_' + date + '.html');
 file.write(htmlHeader);
 file.write(
-	'<thead><tr>' + '<th>نماد</th>' + '<th>شناوری</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
+	'<thead><tr>' +
+		'<th>نماد</th>' +
+		'<th>شناوری</th>' +
+		'<th>بازار</th>' +
+		'<th>گروه</th>' +
+		'<th>سهامیاب</th>' +
+		'</tr></thead><tbody>\n',
 );
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
@@ -540,13 +566,17 @@ allRows.forEach((v, i) => {
 				'<tr><td>' +
 					v.l18 +
 					'</td><td>' +
-				    v.floatVal	+ 
+					v.floatVal +
 					'</td><td>' +
 					v.flow +
 					'</td><td style="color:#' +
 					color +
 					'">' +
 					v.cs +
+					'</td><td>' +
+					'<a href="https://www.sahamyab.com/hashtag/' +
+					v.l18 +
+					'/post">سهامیاب</a>' +
 					'</td></tr>\n',
 			);
 		}
@@ -554,4 +584,3 @@ allRows.forEach((v, i) => {
 });
 file.write(htmlTail);
 file.end();
-
