@@ -42,6 +42,25 @@ const bot = new TelegramBot(token, {polling: true});
 let id = 118685953;
 //bot.sendMessage('filtermarket1', 'Received your message\n');
 
+//bot.sendMessage('@filtermarket1',"<a href=\"https://smojmar.github.io/out_98_08_06/buy_98_08_06.html\">صف هاس خرید</a> \n\n بیشترین حجم # \n\n @filtermarket1" ,{parse_mode : "HTML"})
+//bot.sendMessage('@filtermarket1',"<a href=\"https://smojmar.github.io/out_98_08_06/sell_98_08_06.html\">صف های فروش</a> \n\n بیشترین حجم # \n\n @filtermarket1" ,{parse_mode : "HTML"})
+//bot.sendMessage('@filtermarket1',"<a href=\"https://smojmar.github.io/out_98_08_06/ct_98_08_06.html\">خرید حقوقی</a> \n\n بیشترین حجم # \n بیشترین تعداد #\n\n @filtermarket1" ,{parse_mode : "HTML"})
+bot.sendMessage(id,`<a href=\"https://smojmar.github.io/out_98_08_06/floatVal_98_08_06.html\">شناوری سهم ها</a> 
+
+<pre>
+| Tables   |      Are      |  Cool |
+|----------|:-------------:|------:|
+| col 1 is |  left-aligned | $1600 |
+| col 2 is |    centered   |   $12 |
+| col 3 is | right-aligned |    $1 |
+</pre>
+` + 
+        
+        
+        "\n\n کمترین حجم # \n\n @filtermarket1" ,{parse_mode : "HTML"})
+
+//bot.sendMessage('@filtermarket1',"<a href=\"https://smojmar.github.io/out_98_08_06/tagh1D_98_08_06.html\">تغییر قیمت تمامی سهم ها</a> \n\n بیشترین تغییر # \n\n @filtermarket1" ,{parse_mode : "HTML"})
+
 // Matches "/echo [whatever]"
 bot.onText(/\/echo (.+)/, (msg, match) => {
   // 'msg' is the received Message from Telegram

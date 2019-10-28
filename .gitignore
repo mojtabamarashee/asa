@@ -3,4 +3,11 @@ build
 npm-debug.log
 .env
 .DS_Store
-*.txt
+sell*.txt
+buy*.txt
+ct*.txt
+ct*.html
+nav*
+sell*.html
+buy*.html
+out*

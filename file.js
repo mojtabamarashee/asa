@@ -1,4 +1,4 @@
-date = '98_08_04';
+date = '98_08_06';
 function test() {
 	console.log('salam');
 	const http = new XMLHttpRequest();
@@ -69,7 +69,9 @@ $(document).ready(function() {
 </script>
 </br>
 </br>
-<span style="font-family:'Courier New', Courier, monospace; font-size:100%">دانلود از <a style="font-family:'Courier New', Courier, monospace; font-size:100%" href="https://telegram.me/filtermarket1">کانال تلگرام </a></span>
+<div style="float:center">
+<span style="font-family:'Courier New', Courier, monospace; font-size:150%">دانلود از <a style="font-family:'Courier New', Courier, monospace; font-size:150%" href="https://telegram.me/filtermarket1">کانال تلگرام </a></span>
+</div>
 </br>
 </br>
 </body>
@@ -161,6 +163,7 @@ function Navasan1D(alR) {
 				// if (Math.abs(change) > 4 && v.pl == v.pmin) {
 				out.v[cntr] = v;
 				out.change[cntr] = change;
+				v.navasan1D = change;
 				cntr++;
 			}
 		}
@@ -169,12 +172,48 @@ function Navasan1D(alR) {
 }
 
 let o = Navasan1D(allRows);
-var file = fs.createWriteStream('Nav1D_' + date + '.txt');
-file.write('نماد' + '\t' + 'تغییر' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
+var file = fs.createWriteStream('out_' + date + '/Nav1D_' + date + '.html');
+file.write(htmlHeader);
+file.write(
+	'<thead><tr>' + '<th>نماد</th>' + '<th>تغییر</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
+);
+
 o.v.sort((a, b) => a.change - b.change);
 o.v.forEach((v, i) => {
-	file.write(v.l18 + '\t' + o.change[i] + '\t' + v.flow + '\t' + v.cs + '\n');
+	if (v.l18.match(/^([^0-9]*)$/)) {
+		file.write(
+			'<tr><td>' +
+				v.l18 +
+				'</td><td>' +
+				v.navasan1D +
+				'%' +
+				'</td><td>' +
+				v.flow +
+				'</td><td>' +
+				v.cs +
+				'</td></tr>',
+		);
+	}
 });
+file.write(htmlTail);
+file.end();
+
+var file = fs.createWriteStream('out_' + date + '/tagh1D_' + date + '.html');
+file.write(htmlHeader);
+file.write(
+	'<thead><tr>' + '<th>نماد</th>' + '<th>تغییر</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
+);
+
+allRows.sort((a, b) => a.change - b.change);
+allRows.forEach((v, i) => {
+	if (v.l18.match(/^([^0-9]*)$/)) {
+		file.write(
+			'<tr><td>' + v.l18 + '</td><td>' + v.plp + '%' + '</td><td>' + v.flow + '</td><td>' + v.cs + '</td></tr>',
+		);
+	}
+});
+file.write(htmlTail);
+file.end();
 
 var file = fs.createWriteStream('per.txt');
 allRows.forEach((v, i) => {
@@ -273,7 +312,7 @@ function SafeForoush() {
 }
 o = SafeForoush();
 o.sort((a, b) => a.qo1 - b.qo1);
-var file = fs.createWriteStream('out' + date + '/sell_' + date + '.html');
+var file = fs.createWriteStream('out_' + date + '/sell_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr><th>نماد</th>' +
@@ -284,10 +323,10 @@ file.write(
 		'\n' +
 		'<th>بازار</th>' +
 		'\n' +
-		'<th>گروه</th>' + 
+		'<th>گروه</th>' +
 		'<th>سهامیاب</th>' +
 		'<th>tsetmc</th>' +
-        '</tr></thead><tbody>' +
+		'</tr></thead><tbody>' +
 		'\n',
 );
 o.forEach((v, i) => {
@@ -311,11 +350,10 @@ o.forEach((v, i) => {
 				'<a href="https://www.sahamyab.com/hashtag/' +
 				v.l18 +
 				'/post">سهامیاب</a>' +
-
 				'</td><td>' +
 				'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
-				v.inscode + '">tsetmc</a>' +
-
+				v.inscode +
+				'">tsetmc</a>' +
 				'</td></tr>\n',
 		);
 	}
@@ -323,7 +361,7 @@ o.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
-var file = fs.createWriteStream('out' + date +  '/pe_' + date + '.txt');
+var file = fs.createWriteStream('out_' + date + '/pe_' + date + '.txt');
 file.write('نماد' + '\t' + 'p/e' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
 
 allRows.sort((a, b) => a.cs - b.cs);
@@ -343,7 +381,7 @@ function SafeKharid() {
 
 o = SafeKharid();
 o.sort((a, b) => a.qd1 - b.qd1);
-var file = fs.createWriteStream('out' + date + '/buy_' + date + '.html');
+var file = fs.createWriteStream('out_' + date + '/buy_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' +
@@ -372,16 +410,14 @@ o.forEach((v, i) => {
 				color +
 				'">' +
 				v.cs +
-
 				'</td><td>' +
 				'<a href="https://www.sahamyab.com/hashtag/' +
 				v.l18 +
 				'/post">سهامیاب</a>' +
-
 				'</td><td>' +
 				'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
-				v.inscode + '">tsetmc</a>' +
-
+				v.inscode +
+				'">tsetmc</a>' +
 				'</td></tr>\n',
 		);
 	}
@@ -389,7 +425,7 @@ o.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
-var file = fs.createWriteStream('out' + date + '/1wBaz_' + date + '.html');
+var file = fs.createWriteStream('out_' + date + '/1wBaz_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' + '<th>نماد</th>' + '<th>بازده</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
@@ -418,7 +454,7 @@ file.write(htmlTail);
 file.end();
 
 allRows.sort((a, b) => a.ct.Buy_CountN - b.ct.Buy_CountN);
-var file = fs.createWriteStream('out' + date + '/ct_' + date + '.html');
+var file = fs.createWriteStream('out_' + date + '/ct_' + date + '.html');
 file.write(htmlHeader);
 file.write('<thead><tr><th>نماد</th>' + '\n<th>' + 'حجم</th>' + '\n<th>' + 'تعداد</th>' + '</tr></thead><tbody>\n');
 allRows.forEach((v, i) => {
@@ -492,28 +528,31 @@ function getGzipped(url, callback) {
 var http = require('http');
 zlib = require('zlib');
 
-var file = fs.createWriteStream('out' + date + '/body_' + date + '.html');
 let globalI = 0;
 function GetSymbolsPage() {
+	var file1 = fs.createWriteStream('files/' + 'body_' + date + '.html');
 	allRows.forEach((v, i) => {
 		getGzipped(v.inscode, function(err, data) {
 			var regex = /LVal18AFC='(.*)',D/g;
 			globalI++;
+			console.log('globalI = ', globalI);
 			if (data) {
-				file.write(data + '\n\n\n');
+				file1.write(data + '\n\n\n');
 			}
 		});
 	});
 }
+//GetSymbolsPage();
 
 function GetSymbolsData() {
 	let name = [];
 	let floatVal = [];
+	let totalVol = [];
 	let insCode = [];
 	let cntr = 0;
 
 	//let body = fs.readFileSync('files/body_' + date + '.html');
-	let body = fs.readFileSync('body' + '.html').toString();
+	let body = fs.readFileSync('files/body_' + date + '.html').toString();
 
 	var regex = /LVal18AFC='(.*?)',D/g;
 	match = regex.exec(body);
@@ -533,6 +572,16 @@ function GetSymbolsData() {
 		match = regex.exec(body);
 	}
 
+	var regex = /,ZTitad=(.*?),CI/g;
+	cntr = 0;
+	match = regex.exec(body);
+	while (match != null) {
+		totalVol[cntr++] = match[1];
+		if (match[1]) {
+		}
+		match = regex.exec(body);
+	}
+
 	var regex = /,InsCode='(.*?)',B/g;
 	cntr = 0;
 	match = regex.exec(body);
@@ -543,16 +592,19 @@ function GetSymbolsData() {
 	allRows.forEach((v, i) => {
 		index = insCode.findIndex(v1 => v1 == v.inscode);
 		allRows[i].floatVal = floatVal[index];
+		allRows[i].totalVol = totalVol[index];
 	});
 }
 GetSymbolsData();
 
-var file = fs.createWriteStream('out' + date + '/floatVal_' + date + '.html');
+var file = fs.createWriteStream('out_' + date + '/floatVal_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' +
 		'<th>نماد</th>' +
 		'<th>شناوری</th>' +
+		'<th>کل</th>' +
+		'<th>تعداد</th>' +
 		'<th>بازار</th>' +
 		'<th>گروه</th>' +
 		'<th>سهامیاب</th>' +
@@ -567,6 +619,21 @@ allRows.forEach((v, i) => {
 					v.l18 +
 					'</td><td>' +
 					v.floatVal +
+					'%' +
+					'</td><td data-sort="' +
+					v.totalVol +
+					'">' +
+					numeral(v.totalVol)
+						.format('0a')
+						.toString()
+						.toUpperCase() +
+					'</td><td  data-sort="' +
+					(v.floatVal / 100) * v.totalVol +
+					'">' +
+					numeral((v.floatVal / 100) * v.totalVol)
+						.format('0a')
+						.toString()
+						.toUpperCase() +
 					'</td><td>' +
 					v.flow +
 					'</td><td style="color:#' +
