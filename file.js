@@ -439,6 +439,7 @@ file.write(
 		'<th>گروه</th>' +
 		'<th>سهامیاب</th>' +
 		'<th>tsetmc</th>' +
+		'<th>30\nروزه</th>' +
 		'</tr></thead><tbody>\n',
 );
 o.forEach((v, i) => {
@@ -448,9 +449,9 @@ o.forEach((v, i) => {
 			'<tr><td>' +
 				v.l18 +
 				'</td><td>' +
-				numeral(v.qd1).format() +
+				numeral(v.qd1).format('0a').toUpperCase() +
 				'</td><td>' +
-				v.zd1 +
+				numeral(v.zd1).format('0a').toUpperCase() +
 				'</td><td>' +
 				v.flow +
 				'</td><td style="color:#' +
@@ -465,6 +466,10 @@ o.forEach((v, i) => {
 				'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
 				v.inscode +
 				'">tsetmc</a>' +
+				'</td><td>' +
+				'<img  src="http://tsetmc.com/tsev2/chart/img/Inst.aspx?i=' +
+				v.inscode +
+				'"/>' +
 				'</td></tr>\n',
 		);
 	}
