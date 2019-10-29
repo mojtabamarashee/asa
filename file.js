@@ -32,7 +32,23 @@ function test() {
 		a.download = filename;
 		a.href = window.URL.createObjectURL(blob);
 		a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-		e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+		e.initMouseEvent(
+			'click',
+			true,
+			false,
+			window,
+			0,
+			0,
+			0,
+			0,
+			0,
+			false,
+			false,
+			false,
+			false,
+			0,
+			null,
+		);
 		a.dispatchEvent(e);
 	};
 })(console);
@@ -62,15 +78,16 @@ htmlTail = `
 <script type="application/javascript" >
 $(document).ready(function() {
     $('#table').DataTable( {
-        "order": [[ 0, "desc" ]],
+        "order": [[ 1, "desc" ]],
         "pageLength": 100,
     } );
+    document.getElementById("table_filter").style.textAlign = "center";
 } );
 </script>
 </br>
 </br>
-<div style="float:center">
-<span style="font-family:'Courier New', Courier, monospace; font-size:150%">دانلود از <a style="font-family:'Courier New', Courier, monospace; font-size:150%" href="https://telegram.me/filtermarket1">کانال تلگرام </a></span>
+<div style="text-align: center">
+<span style="font-family:'Courier New', Courier, monospace; font-size:200%">دانلود شده از <a style="" href="https://telegram.me/filtermarket1">کانال تلگرام </a></span>
 </div>
 </br>
 </br>
@@ -124,11 +141,18 @@ allRows.map((v, i) => {
 	if (v.hist) {
 		for (let j = 0; j < v.hist.length; j++) {
 			if (j == 0) {
-				v.per[0] = ((v.pl - v.hist[0].PDrCotVal) / v.hist[0].PDrCotVal) * 100;
+				v.per[0] =
+					((v.pl - v.hist[0].PDrCotVal) / v.hist[0].PDrCotVal) * 100;
 				v.perSum[0] = v.per[0];
 			} else {
-				v.per[j] = ((v.hist[j - 1].PDrCotVal - v.hist[j].PDrCotVal) / v.hist[j].PDrCotVal) * 100;
-				v.perSum[j] = ((v.pl - v.hist[j - 1].PDrCotVal) / v.hist[j - 1].PDrCotVal) * 100;
+				v.per[j] =
+					((v.hist[j - 1].PDrCotVal - v.hist[j].PDrCotVal) /
+						v.hist[j].PDrCotVal) *
+					100;
+				v.perSum[j] =
+					((v.pl - v.hist[j - 1].PDrCotVal) /
+						v.hist[j - 1].PDrCotVal) *
+					100;
 				//v.perSum[j] = v.per[j] + v.per[j - 1];
 			}
 			v.per[j] = Math.round(v.per[j] * 100) / 100;
@@ -175,7 +199,11 @@ let o = Navasan1D(allRows);
 var file = fs.createWriteStream('out_' + date + '/Nav1D_' + date + '.html');
 file.write(htmlHeader);
 file.write(
-	'<thead><tr>' + '<th>نماد</th>' + '<th>تغییر</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
+	'<thead><tr>' +
+		'<th>نماد</th>' +
+		'<th>تغییر</th>' +
+		'<th>بازار</th>' +
+		'<th>گروه</th></tr></thead><tbody>\n',
 );
 
 o.v.sort((a, b) => a.change - b.change);
@@ -201,14 +229,27 @@ file.end();
 var file = fs.createWriteStream('out_' + date + '/tagh1D_' + date + '.html');
 file.write(htmlHeader);
 file.write(
-	'<thead><tr>' + '<th>نماد</th>' + '<th>تغییر</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
+	'<thead><tr>' +
+		'<th>نماد</th>' +
+		'<th>تغییر</th>' +
+		'<th>بازار</th>' +
+		'<th>گروه</th></tr></thead><tbody>\n',
 );
 
 allRows.sort((a, b) => a.change - b.change);
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		file.write(
-			'<tr><td>' + v.l18 + '</td><td>' + v.plp + '%' + '</td><td>' + v.flow + '</td><td>' + v.cs + '</td></tr>',
+			'<tr><td>' +
+				v.l18 +
+				'</td><td>' +
+				v.plp +
+				'%' +
+				'</td><td>' +
+				v.flow +
+				'</td><td>' +
+				v.cs +
+				'</td></tr>',
 		);
 	}
 });
@@ -307,7 +348,9 @@ file.end();
 
 function SafeForoush() {
 	let o = [];
-	o = allRows.filter((v, i) => Math.round(v.po1) == Math.round(v.tmin) && v.qd1 == 0);
+	o = allRows.filter(
+		(v, i) => Math.round(v.po1) == Math.round(v.tmin) && v.qd1 == 0,
+	);
 	return o;
 }
 o = SafeForoush();
@@ -368,14 +411,18 @@ allRows.sort((a, b) => a.cs - b.cs);
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		if (v.pe) {
-			file.write(v.l18 + '\t' + v.pe + '\t' + v.flow + '\t' + v.cs + '\n');
+			file.write(
+				v.l18 + '\t' + v.pe + '\t' + v.flow + '\t' + v.cs + '\n',
+			);
 		}
 	}
 });
 
 function SafeKharid() {
 	let o = [];
-	o = allRows.filter((v, i) => Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0);
+	o = allRows.filter(
+		(v, i) => Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0,
+	);
 	return o;
 }
 
@@ -428,17 +475,25 @@ file.end();
 var file = fs.createWriteStream('out_' + date + '/1wBaz_' + date + '.html');
 file.write(htmlHeader);
 file.write(
-	'<thead><tr>' + '<th>نماد</th>' + '<th>بازده</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
+	'<thead><tr>' +
+		'<th>نماد</th>' +
+		'<th>بازده</th>' +
+		'<th>بازار</th>' +
+		'<th>گروه</th></tr></thead><tbody>\n',
 );
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		if (v.hist) {
-			if (v.hist.length > 30 && v.hist[5].PDrCotVal > 0) color = GetColor(v.cs);
+			if (v.hist.length > 30 && v.hist[5].PDrCotVal > 0)
+				color = GetColor(v.cs);
 			file.write(
 				'<tr><td>' +
 					v.l18 +
 					'</td><td>' +
-					numeral(((v.pl - v.hist[5].PDrCotVal) / v.hist[5].PDrCotVal) * 100).format() +
+					numeral(
+						((v.pl - v.hist[5].PDrCotVal) / v.hist[5].PDrCotVal) *
+							100,
+					).format() +
 					'</td><td>' +
 					v.flow +
 					'</td><td style="color:#' +
@@ -456,7 +511,14 @@ file.end();
 allRows.sort((a, b) => a.ct.Buy_CountN - b.ct.Buy_CountN);
 var file = fs.createWriteStream('out_' + date + '/ct_' + date + '.html');
 file.write(htmlHeader);
-file.write('<thead><tr><th>نماد</th>' + '\n<th>' + 'حجم</th>' + '\n<th>' + 'تعداد</th>' + '</tr></thead><tbody>\n');
+file.write(
+	'<thead><tr><th>نماد</th>' +
+		'\n<th>' +
+		'حجم</th>' +
+		'\n<th>' +
+		'تعداد</th>' +
+		'</tr></thead><tbody>\n',
+);
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		if (v.ct.Buy_CountN)
@@ -548,6 +610,7 @@ function GetSymbolsData() {
 	let name = [];
 	let floatVal = [];
 	let totalVol = [];
+	let sectorPE = [];
 	let insCode = [];
 	let cntr = 0;
 
@@ -589,10 +652,20 @@ function GetSymbolsData() {
 		insCode[cntr++] = match[1];
 		match = regex.exec(body);
 	}
+
+	var regex = /,SectorPE='(.*?)',KAjC/g;
+	cntr = 0;
+	match = regex.exec(body);
+	while (match != null) {
+		sectorPE[cntr++] = match[1];
+		match = regex.exec(body);
+	}
+
 	allRows.forEach((v, i) => {
 		index = insCode.findIndex(v1 => v1 == v.inscode);
 		allRows[i].floatVal = floatVal[index];
 		allRows[i].totalVol = totalVol[index];
+		allRows[i].sectorPE = sectorPE[index];
 	});
 }
 GetSymbolsData();
@@ -647,6 +720,39 @@ allRows.forEach((v, i) => {
 					'</td></tr>\n',
 			);
 		}
+	}
+});
+file.write(htmlTail);
+file.end();
+
+var file = fs.createWriteStream('out_' + date + '/drug_' + date + '.html');
+file.write(htmlHeader);
+file.write(
+	'<thead><tr>' +
+		'<th>نماد</th>' +
+		'<th>pe</th>' +
+		'<th>گروهpe</th>' +
+		'<th>بازار</th>' +
+		'<th>tsm</th>' +
+		'</tr></thead><tbody>\n',
+);
+allRows.filter((v, i) => v.cs == 43).forEach((v, i) => {
+	if (v.l18.match(/^([^0-9]*)$/) && v.pe && v.sectorPE) {
+		file.write(
+			'<tr><td>' +
+				v.l18 +
+				'</td><td>' +
+				v.pe +
+				'</td><td>' +
+				v.sectorPE +
+				'</td><td>' +
+				v.flow +
+				'</td><td>' +
+				'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
+				v.inscode +
+				'">tsm</a>' +
+				'</td></tr>\n',
+		);
 	}
 });
 file.write(htmlTail);
