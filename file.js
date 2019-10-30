@@ -1,4 +1,7 @@
-date = '98_08_06';
+date = '98_08_08';
+let getSymbolsDataFlag = 1;
+let getSymbolsPageFlag = 0;
+let sendTelegramFlag = 1;
 function test() {
 	console.log('salam');
 	const http = new XMLHttpRequest();
@@ -32,23 +35,7 @@ function test() {
 		a.download = filename;
 		a.href = window.URL.createObjectURL(blob);
 		a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-		e.initMouseEvent(
-			'click',
-			true,
-			false,
-			window,
-			0,
-			0,
-			0,
-			0,
-			0,
-			false,
-			false,
-			false,
-			false,
-			0,
-			null,
-		);
+		e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 		a.dispatchEvent(e);
 	};
 })(console);
@@ -141,18 +128,11 @@ allRows.map((v, i) => {
 	if (v.hist) {
 		for (let j = 0; j < v.hist.length; j++) {
 			if (j == 0) {
-				v.per[0] =
-					((v.pl - v.hist[0].PDrCotVal) / v.hist[0].PDrCotVal) * 100;
+				v.per[0] = ((v.pl - v.hist[0].PDrCotVal) / v.hist[0].PDrCotVal) * 100;
 				v.perSum[0] = v.per[0];
 			} else {
-				v.per[j] =
-					((v.hist[j - 1].PDrCotVal - v.hist[j].PDrCotVal) /
-						v.hist[j].PDrCotVal) *
-					100;
-				v.perSum[j] =
-					((v.pl - v.hist[j - 1].PDrCotVal) /
-						v.hist[j - 1].PDrCotVal) *
-					100;
+				v.per[j] = ((v.hist[j - 1].PDrCotVal - v.hist[j].PDrCotVal) / v.hist[j].PDrCotVal) * 100;
+				v.perSum[j] = ((v.pl - v.hist[j - 1].PDrCotVal) / v.hist[j - 1].PDrCotVal) * 100;
 				//v.perSum[j] = v.per[j] + v.per[j - 1];
 			}
 			v.per[j] = Math.round(v.per[j] * 100) / 100;
@@ -199,11 +179,7 @@ let o = Navasan1D(allRows);
 var file = fs.createWriteStream('out_' + date + '/Nav1D_' + date + '.html');
 file.write(htmlHeader);
 file.write(
-	'<thead><tr>' +
-		'<th>نماد</th>' +
-		'<th>تغییر</th>' +
-		'<th>بازار</th>' +
-		'<th>گروه</th></tr></thead><tbody>\n',
+	'<thead><tr>' + '<th>نماد</th>' + '<th>تغییر</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
 );
 
 o.v.sort((a, b) => a.change - b.change);
@@ -229,27 +205,14 @@ file.end();
 var file = fs.createWriteStream('out_' + date + '/tagh1D_' + date + '.html');
 file.write(htmlHeader);
 file.write(
-	'<thead><tr>' +
-		'<th>نماد</th>' +
-		'<th>تغییر</th>' +
-		'<th>بازار</th>' +
-		'<th>گروه</th></tr></thead><tbody>\n',
+	'<thead><tr>' + '<th>نماد</th>' + '<th>تغییر</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
 );
 
 allRows.sort((a, b) => a.change - b.change);
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		file.write(
-			'<tr><td>' +
-				v.l18 +
-				'</td><td>' +
-				v.plp +
-				'%' +
-				'</td><td>' +
-				v.flow +
-				'</td><td>' +
-				v.cs +
-				'</td></tr>',
+			'<tr><td>' + v.l18 + '</td><td>' + v.plp + '%' + '</td><td>' + v.flow + '</td><td>' + v.cs + '</td></tr>',
 		);
 	}
 });
@@ -348,9 +311,7 @@ file.end();
 
 function SafeForoush() {
 	let o = [];
-	o = allRows.filter(
-		(v, i) => Math.round(v.po1) == Math.round(v.tmin) && v.qd1 == 0,
-	);
+	o = allRows.filter((v, i) => Math.round(v.po1) == Math.round(v.tmin) && v.qd1 == 0);
 	return o;
 }
 o = SafeForoush();
@@ -367,8 +328,10 @@ file.write(
 		'<th>بازار</th>' +
 		'\n' +
 		'<th>گروه</th>' +
-		'<th>سهامیاب</th>' +
-		'<th>tsetmc</th>' +
+		'<th>30روز</th>' +
+		'\n' +
+		'<th>س</th>' +
+		'<th>t</th>' +
 		'</tr></thead><tbody>' +
 		'\n',
 );
@@ -379,8 +342,12 @@ o.forEach((v, i) => {
 			'<tr><td>' +
 				v.l18 +
 				'</td>' +
-				'\n<td>' +
-				numeral(v.qo1).format() +
+				'\n<td data-sort="' +
+				v.qo1 +
+				'">' +
+				numeral(v.qo1)
+					.format('0a')
+					.toUpperCase() +
 				'</td>\n<td>' +
 				v.zo1 +
 				'</td>\n<td>' +
@@ -389,15 +356,19 @@ o.forEach((v, i) => {
 				color +
 				'">' +
 				v.cs +
-				'</td><td>' +
-				'<a href="https://www.sahamyab.com/hashtag/' +
+				'</td>' +
+				'<td><img  src="http://tsetmc.com/tsev2/chart/img/Inst.aspx?i=' +
+				v.inscode +
+				'"/></td>' +
+				'<td><a href="https://www.sahamyab.com/hashtag/' +
 				v.l18 +
-				'/post">سهامیاب</a>' +
+				'/post"><img src="http://smojmar.github.io/upload/sahamYab.png"></a>' +
 				'</td><td>' +
 				'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
 				v.inscode +
-				'">tsetmc</a>' +
-				'</td></tr>\n',
+				'"><img src="http://smojmar.github.io/upload/tseIcon.jpg"></a>' +
+				'</td>' +
+				'</tr>',
 		);
 	}
 });
@@ -411,18 +382,14 @@ allRows.sort((a, b) => a.cs - b.cs);
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		if (v.pe) {
-			file.write(
-				v.l18 + '\t' + v.pe + '\t' + v.flow + '\t' + v.cs + '\n',
-			);
+			file.write(v.l18 + '\t' + v.pe + '\t' + v.flow + '\t' + v.cs + '\n');
 		}
 	}
 });
 
 function SafeKharid() {
 	let o = [];
-	o = allRows.filter(
-		(v, i) => Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0,
-	);
+	o = allRows.filter((v, i) => Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0);
 	return o;
 }
 
@@ -437,9 +404,9 @@ file.write(
 		'<th>تعداد</th>' +
 		'<th>بازار</th>' +
 		'<th>گروه</th>' +
-		'<th>سهامیاب</th>' +
-		'<th>tsetmc</th>' +
-		'<th>30\nروزه</th>' +
+		'<th>30\nروز</th>' +
+		'<th>س</th>' +
+		'<th>t</th>' +
 		'</tr></thead><tbody>\n',
 );
 o.forEach((v, i) => {
@@ -448,10 +415,19 @@ o.forEach((v, i) => {
 		file.write(
 			'<tr><td>' +
 				v.l18 +
-				'</td><td>' +
-				numeral(v.qd1).format('0a').toUpperCase() +
-				'</td><td>' +
-				numeral(v.zd1).format('0a').toUpperCase() +
+				'</td>' +
+				'<td data-sort="' +
+				v.qd1 +
+				'">' +
+				numeral(v.qd1)
+					.format('0a')
+					.toUpperCase() +
+				'</td><td data-sort="' +
+				v.zd1 +
+				'">' +
+				numeral(v.zd1)
+					.format('0a')
+					.toUpperCase() +
 				'</td><td>' +
 				v.flow +
 				'</td><td style="color:#' +
@@ -459,18 +435,19 @@ o.forEach((v, i) => {
 				'">' +
 				v.cs +
 				'</td><td>' +
-				'<a href="https://www.sahamyab.com/hashtag/' +
-				v.l18 +
-				'/post">سهامیاب</a>' +
-				'</td><td>' +
-				'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
-				v.inscode +
-				'">tsetmc</a>' +
-				'</td><td>' +
 				'<img  src="http://tsetmc.com/tsev2/chart/img/Inst.aspx?i=' +
 				v.inscode +
 				'"/>' +
-				'</td></tr>\n',
+				'</td>' +
+				'<td><a href="https://www.sahamyab.com/hashtag/' +
+				v.l18 +
+				'/post"><img src="http://smojmar.github.io/upload/sahamYab.png"> </a>' +
+				'</td><td>' +
+				'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
+				v.inscode +
+				'"><img src="http://smojmar.github.io/upload/tseIcon.jpg"></a>' +
+				'</td>' +
+				'</tr>\n',
 		);
 	}
 });
@@ -480,25 +457,17 @@ file.end();
 var file = fs.createWriteStream('out_' + date + '/1wBaz_' + date + '.html');
 file.write(htmlHeader);
 file.write(
-	'<thead><tr>' +
-		'<th>نماد</th>' +
-		'<th>بازده</th>' +
-		'<th>بازار</th>' +
-		'<th>گروه</th></tr></thead><tbody>\n',
+	'<thead><tr>' + '<th>نماد</th>' + '<th>بازده</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
 );
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		if (v.hist) {
-			if (v.hist.length > 30 && v.hist[5].PDrCotVal > 0)
-				color = GetColor(v.cs);
+			if (v.hist.length > 30 && v.hist[5].PDrCotVal > 0) color = GetColor(v.cs);
 			file.write(
 				'<tr><td>' +
 					v.l18 +
 					'</td><td>' +
-					numeral(
-						((v.pl - v.hist[5].PDrCotVal) / v.hist[5].PDrCotVal) *
-							100,
-					).format() +
+					numeral(((v.pl - v.hist[5].PDrCotVal) / v.hist[5].PDrCotVal) * 100).format() +
 					'</td><td>' +
 					v.flow +
 					'</td><td style="color:#' +
@@ -516,14 +485,7 @@ file.end();
 allRows.sort((a, b) => a.ct.Buy_CountN - b.ct.Buy_CountN);
 var file = fs.createWriteStream('out_' + date + '/ct_' + date + '.html');
 file.write(htmlHeader);
-file.write(
-	'<thead><tr><th>نماد</th>' +
-		'\n<th>' +
-		'حجم</th>' +
-		'\n<th>' +
-		'تعداد</th>' +
-		'</tr></thead><tbody>\n',
-);
+file.write('<thead><tr><th>نماد</th>' + '\n<th>' + 'حجم</th>' + '\n<th>' + 'تعداد</th>' + '</tr></thead><tbody>\n');
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		if (v.ct.Buy_CountN)
@@ -609,7 +571,9 @@ function GetSymbolsPage() {
 		});
 	});
 }
-//GetSymbolsPage();
+if (getSymbolsPageFlag) {
+	GetSymbolsPage();
+}
 
 function GetSymbolsData() {
 	let name = [];
@@ -635,6 +599,7 @@ function GetSymbolsData() {
 	match = regex.exec(body);
 	while (match != null) {
 		floatVal[cntr++] = match[1];
+        console.log("match = ", match[1]);
 		if (match[1]) {
 		}
 		match = regex.exec(body);
@@ -673,7 +638,9 @@ function GetSymbolsData() {
 		allRows[i].sectorPE = sectorPE[index];
 	});
 }
-GetSymbolsData();
+if (getSymbolsDataFlag) {
+	GetSymbolsData();
+}
 
 var file = fs.createWriteStream('out_' + date + '/floatVal_' + date + '.html');
 file.write(htmlHeader);
@@ -762,3 +729,100 @@ allRows.filter((v, i) => v.cs == 43).forEach((v, i) => {
 });
 file.write(htmlTail);
 file.end();
+
+function SendTelegram() {
+	const TelegramBot = require('node-telegram-bot-api');
+	const token = '982988089:AAHu--kbHd3Cmme4uBA1K7LQ8EPu6JrTs8A';
+	const bot = new TelegramBot(token, {polling: true});
+
+	let sp = date.split('_');
+	let tarikh = '\u{1F4c5} تاریخ : ' + sp[0] + '/' + sp[1] + '/' + sp[2] + '\n\n';
+	let id;
+	id = 118685953;
+	id = '@filtermarket1';
+
+	bot.sendMessage(
+		id,
+        tarikh + 
+		'<a href="https://smojmar.github.io/out_' +
+			date +
+			'/buy_' +
+			date +
+			'.html">صف های خرید</a> \n\n بیشترین حجم # \n\n @filtermarket1',
+		{parse_mode: 'HTML'},
+	);
+	bot.sendMessage(
+		id,
+        tarikh + 
+		'<a href="https://smojmar.github.io/out_' +
+			date +
+			'/sell_' +
+			date +
+			'.html">صف های فروش</a> \n\n بیشترین حجم # \n\n @filtermarket1',
+		{parse_mode: 'HTML'},
+	);
+
+	bot.sendMessage(
+		id,
+		tarikh +
+			'<a href="https://smojmar.github.io/out_' +
+			date +
+			'/ct_' +
+			date +
+			'.html">خرید حقوقی</a> \n\n بیشترین حجم # \n بیشترین تعداد #\n\n---\n' +
+			'\n@filtermarket1',
+		{parse_mode: 'HTML'},
+	);
+	bot.sendMessage(
+		id,
+        tarikh + 
+		'<a href="https://smojmar.github.io/out_' +
+			date +
+			'/floatVal_' +
+			date +
+			'.html">شناوری سهم ها</a>' +
+			'\n\n کمترین حجم # \n\n @filtermarket1',
+		{parse_mode: 'HTML'},
+	);
+
+	bot.sendMessage(
+		id,
+        tarikh + 
+		'<a href="https://smojmar.github.io/out_' +
+			date +
+			'/tagh1D_' +
+			date +
+			'.html">تغییر قیمت تمامی سهم ها</a> \n\n بیشترین تغییر # \n\n @filtermarket1',
+		{parse_mode: 'HTML'},
+	);
+
+	// Matches "/echo [whatever]"
+	bot.onText(/\/echo (.+)/, (msg, match) => {
+		// 'msg' is the received Message from Telegram
+		// 'match' is the result of executing the regexp above on the text content
+		// of the message
+
+		const chatId = msg.chat.id;
+		const resp = match[1]; // the captured "whatever"
+
+		// send back the matched "atever" to the chat
+		bot.sendMessage(chatId, chId);
+	});
+
+	// Listen for any kind of meage. There are different kinds of
+	// messages.
+	bot.on('message', msg => {
+		const chatId = msg.chat.id;
+
+		// send a message to the ct acknowledging receipt of their message
+		bot.sendMessage(
+			'@filtermarket1',
+			'<b>bold</b> \n <i>italic</i> \n <em>italic with em</em> \n <a href="http://www.example.com/">inline URL</a> \n <code>inline fixed-width code</code> \n <pre>pre-formatted fixed-width code block</pre>',
+			{parse_mode: 'HTML'},
+		);
+	});
+}
+
+if (sendTelegramFlag) {
+	SendTelegram();
+}
