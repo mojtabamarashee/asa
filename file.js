@@ -1,7 +1,10 @@
 date = '98_08_08';
-let getSymbolsDataFlag = 1;
+let getSymbolsDataFlag = 0;
 let getSymbolsPageFlag = 0;
 let sendTelegramFlag = 1;
+
+var tulind = require('tulind');
+
 function test() {
 	console.log('salam');
 	const http = new XMLHttpRequest();
@@ -298,15 +301,68 @@ function CalculateRSI(hist) {
 	return RSIndex;
 }
 
-var file = fs.createWriteStream('rsi.txt');
+var file = fs.createWriteStream('out_' + date + '/rsi_' + date + '.html');
+file.write(htmlHeader);
+file.write(
+	'<thead><tr>' +
+		'<th>نماد</th>' +
+		'<th>RSI</th>' +
+		'<th>بازار</th>' +
+		'<th>گروه</th>' +
+		'<th>30روز</th>' +
+		'<th>س</th>' +
+		'<th>t</th>' +
+		'</tr></thead><tbody>\n',
+);
 allRows.forEach((v, i) => {
 	if (v.hist && v.hist[50]) {
 		if (v.l18.match(/^([^0-9]*)$/)) {
-			//let rsi = CalculateRSI(v.hist);
-			//file.write(v.l18 + ' , ' + rsi + '\n');
+			let data = v.hist.map(v => v.PClosing).reverse();
+			data[data.length] = v.pc;
+			//if (v.l18 == 'شپنا') console.log(data);
+			tulind.indicators.rsi.indicator([data], [14], function(err, results) {
+				v.rsi = results[0];
+			});
+
+			color = GetColor(v.cs);
+			let rsi = numeral(v.rsi[v.rsi.length - 1]).format();
+			if (rsi > 0) {
+				file.write(
+					'<tr>' +
+						'<td>' +
+						v.l18 +
+						'</td>' +
+						'<td>' +
+						+rsi +
+						'</td>' +
+						'<td>' +
+						v.flow +
+						'</td>' +
+						'<td style="color:#' +
+						color +
+						'">' +
+						v.cs +
+						'</td>' +
+						'<td>' +
+						'<img  src="http://tsetmc.com/tsev2/chart/img/Inst.aspx?i=' +
+						v.inscode +
+						'"/>' +
+						'</td>' +
+						'<td><a href="https://www.sahamyab.com/hashtag/' +
+						v.l18 +
+						'/post"><img src="http://smojmar.github.io/upload/sahamYab.png"> </a>' +
+						'</td><td>' +
+						'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
+						v.inscode +
+						'"><img src="http://smojmar.github.io/upload/tseIcon.jpg"></a>' +
+						'</td>' +
+						'</tr>\n',
+				);
+			}
 		}
 	}
 });
+file.write(htmlTail);
 file.end();
 
 function SafeForoush() {
@@ -599,7 +655,6 @@ function GetSymbolsData() {
 	match = regex.exec(body);
 	while (match != null) {
 		floatVal[cntr++] = match[1];
-        console.log("match = ", match[1]);
 		if (match[1]) {
 		}
 		match = regex.exec(body);
@@ -741,58 +796,69 @@ function SendTelegram() {
 	id = 118685953;
 	id = '@filtermarket1';
 
-	bot.sendMessage(
-		id,
-        tarikh + 
-		'<a href="https://smojmar.github.io/out_' +
-			date +
-			'/buy_' +
-			date +
-			'.html">صف های خرید</a> \n\n بیشترین حجم # \n\n @filtermarket1',
-		{parse_mode: 'HTML'},
-	);
-	bot.sendMessage(
-		id,
-        tarikh + 
-		'<a href="https://smojmar.github.io/out_' +
-			date +
-			'/sell_' +
-			date +
-			'.html">صف های فروش</a> \n\n بیشترین حجم # \n\n @filtermarket1',
-		{parse_mode: 'HTML'},
-	);
-
+	//bot.sendMessage(
+	//	id,
+	//	tarikh +
+	//		'<a href="https://smojmar.github.io/out_' +
+	//		date +
+	//		'/buy_' +
+	//		date +
+	//		'.html">صف های خرید</a> \n\n بیشترین حجم # \n\n @filtermarket1',
+	//	{parse_mode: 'HTML'},
+	//);
+	//bot.sendMessage(
+	//	id,
+	//	tarikh +
+	//		'<a href="https://smojmar.github.io/out_' +
+	//		date +
+	//		'/sell_' +
+	//		date +
+	//		'.html">صف های فروش</a> \n\n بیشترین حجم # \n\n @filtermarket1',
+	//	{parse_mode: 'HTML'},
+	//);
+    //
+	//bot.sendMessage(
+	//	id,
+	//	tarikh +
+	//		'<a href="https://smojmar.github.io/out_' +
+	//		date +
+	//		'/ct_' +
+	//		date +
+	//		'.html">خرید حقوقی</a> \n\n بیشترین حجم # \n بیشترین تعداد #\n\n' +
+	//		' @filtermarket1',
+	//	{parse_mode: 'HTML'},
+	//);
+	//bot.sendMessage(
+	//	id,
+	//	tarikh +
+	//		'<a href="https://smojmar.github.io/out_' +
+	//		date +
+	//		'/floatVal_' +
+	//		date +
+	//		'.html">شناوری سهم ها</a>' +
+	//		'\n\n کمترین حجم # \n\n @filtermarket1',
+	//	{parse_mode: 'HTML'},
+	//);
+    //
+	//bot.sendMessage(
+	//	id,
+	//	tarikh +
+	//		'<a href="https://smojmar.github.io/out_' +
+	//		date +
+	//		'/tagh1D_' +
+	//		date +
+	//		'.html">تغییر قیمت تمامی سهم ها</a> \n\n بیشترین تغییر # \n\n @filtermarket1',
+	//	{parse_mode: 'HTML'},
+	//);
+	
 	bot.sendMessage(
 		id,
 		tarikh +
 			'<a href="https://smojmar.github.io/out_' +
 			date +
-			'/ct_' +
+			'/rsi_' +
 			date +
-			'.html">خرید حقوقی</a> \n\n بیشترین حجم # \n بیشترین تعداد #\n\n---\n' +
-			'\n@filtermarket1',
-		{parse_mode: 'HTML'},
-	);
-	bot.sendMessage(
-		id,
-        tarikh + 
-		'<a href="https://smojmar.github.io/out_' +
-			date +
-			'/floatVal_' +
-			date +
-			'.html">شناوری سهم ها</a>' +
-			'\n\n کمترین حجم # \n\n @filtermarket1',
-		{parse_mode: 'HTML'},
-	);
-
-	bot.sendMessage(
-		id,
-        tarikh + 
-		'<a href="https://smojmar.github.io/out_' +
-			date +
-			'/tagh1D_' +
-			date +
-			'.html">تغییر قیمت تمامی سهم ها</a> \n\n بیشترین تغییر # \n\n @filtermarket1',
+			'.html">مقادیر RSI برای تمامی سهم ها</a> \n\n بیشترین تغییر #' +'\n\n مقادیر کم ممکن است به علت افزایش سرمایه یاشد ' + '\n\n @filtermarket1',
 		{parse_mode: 'HTML'},
 	);
 

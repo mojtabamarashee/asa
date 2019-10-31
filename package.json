@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/mojtabamarashee/asa#readme",
   "devDependencies": {
-    "numeral": "^2.0.6"
+    "numeral": "^2.0.6",
+    "tulind": "^0.8.18"
   },
   "dependencies": {
     "node-telegram-bot-api": "^0.40.0"
