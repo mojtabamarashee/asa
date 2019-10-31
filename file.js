@@ -1,7 +1,7 @@
 date = '98_08_08';
-let getSymbolsDataFlag = 0;
+let getSymbolsDataFlag = 1;
 let getSymbolsPageFlag = 0;
-let sendTelegramFlag = 1;
+let sendTelegramFlag = 0;
 
 var tulind = require('tulind');
 
@@ -18,6 +18,7 @@ function test() {
 	http.onload = () => console.log(http.responseText);
 }
 
+GetBazColor = ((v)=> v.color);
 (function(console) {
 	console.save = function(data, filename) {
 		if (!data) {
@@ -326,6 +327,7 @@ allRows.forEach((v, i) => {
 
 			color = GetColor(v.cs);
 			let rsi = numeral(v.rsi[v.rsi.length - 1]).format();
+            let bazColor = GetBazColor(v);
 			if (rsi > 0) {
 				file.write(
 					'<tr>' +
@@ -335,7 +337,7 @@ allRows.forEach((v, i) => {
 						'<td>' +
 						+rsi +
 						'</td>' +
-						'<td>' +
+						'<td style="color:' + bazColor + '">' +
 						v.flow +
 						'</td>' +
 						'<td style="color:#' +
@@ -637,6 +639,7 @@ function GetSymbolsData() {
 	let totalVol = [];
 	let sectorPE = [];
 	let insCode = [];
+    let color = [];
 	let cntr = 0;
 
 	//let body = fs.readFileSync('files/body_' + date + '.html');
@@ -686,11 +689,35 @@ function GetSymbolsData() {
 		match = regex.exec(body);
 	}
 
+
+	var regex = /,Title='.*',Fa/g;
+	cntr = 0;
+	match = regex.exec(body);
+	while (match != null) {
+		if(match[0].match('زرد'))
+        {
+            color[cntr++] = 'yellow';
+        }
+        else if(match[0].match('قرمز'))
+        {
+            color[cntr++] = 'red';
+        }
+        else if(match[0].match('نارنجی'))
+        {
+            color[cntr++] = 'orange';
+        }
+        else
+        {
+            color[cntr++] = 'black';
+        }
+		match = regex.exec(body);
+	}
 	allRows.forEach((v, i) => {
 		index = insCode.findIndex(v1 => v1 == v.inscode);
 		allRows[i].floatVal = floatVal[index];
 		allRows[i].totalVol = totalVol[index];
 		allRows[i].sectorPE = sectorPE[index];
+		allRows[i].color = color[index];
 	});
 }
 if (getSymbolsDataFlag) {
@@ -892,3 +919,5 @@ function SendTelegram() {
 if (sendTelegramFlag) {
 	SendTelegram();
 }
+
+
