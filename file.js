@@ -1,7 +1,7 @@
-date = '98_08_08';
-let getSymbolsDataFlag = 1;
+date = '98_08_13';
+let getSymbolsDataFlag = 0;
 let getSymbolsPageFlag = 0;
-let sendTelegramFlag = 0;
+let sendTelegramFlag = 1;
 
 var tulind = require('tulind');
 
@@ -18,7 +18,7 @@ function test() {
 	http.onload = () => console.log(http.responseText);
 }
 
-GetBazColor = ((v)=> v.color);
+GetBazColor = v => v.color;
 (function(console) {
 	console.save = function(data, filename) {
 		if (!data) {
@@ -327,7 +327,7 @@ allRows.forEach((v, i) => {
 
 			color = GetColor(v.cs);
 			let rsi = numeral(v.rsi[v.rsi.length - 1]).format();
-            let bazColor = GetBazColor(v);
+			let bazColor = GetBazColor(v);
 			if (rsi > 0) {
 				file.write(
 					'<tr>' +
@@ -337,7 +337,9 @@ allRows.forEach((v, i) => {
 						'<td>' +
 						+rsi +
 						'</td>' +
-						'<td style="color:' + bazColor + '">' +
+						'<td style="color:' +
+						bazColor +
+						'">' +
 						v.flow +
 						'</td>' +
 						'<td style="color:#' +
@@ -520,20 +522,22 @@ file.write(
 allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/)) {
 		if (v.hist) {
-			if (v.hist.length > 30 && v.hist[5].PDrCotVal > 0) color = GetColor(v.cs);
-			file.write(
-				'<tr><td>' +
-					v.l18 +
-					'</td><td>' +
-					numeral(((v.pl - v.hist[5].PDrCotVal) / v.hist[5].PDrCotVal) * 100).format() +
-					'</td><td>' +
-					v.flow +
-					'</td><td style="color:#' +
-					color +
-					'">' +
-					v.cs +
-					'</td></tr>\n',
-			);
+			if (v.hist.length > 30 && v.hist[6].PDrCotVal > 0) {
+				color = GetColor(v.cs);
+				file.write(
+					'<tr><td>' +
+						v.l18 +
+						'</td><td>' +
+						numeral(((v.pl - v.hist[6].PDrCotVal) / v.hist[6].PDrCotVal) * 100).format() +
+						'</td><td>' +
+						v.flow +
+						'</td><td style="color:#' +
+						color +
+						'">' +
+						v.cs +
+						'</td></tr>\n',
+				);
+			}
 		}
 	}
 });
@@ -639,7 +643,7 @@ function GetSymbolsData() {
 	let totalVol = [];
 	let sectorPE = [];
 	let insCode = [];
-    let color = [];
+	let color = [];
 	let cntr = 0;
 
 	//let body = fs.readFileSync('files/body_' + date + '.html');
@@ -689,27 +693,19 @@ function GetSymbolsData() {
 		match = regex.exec(body);
 	}
 
-
 	var regex = /,Title='.*',Fa/g;
 	cntr = 0;
 	match = regex.exec(body);
 	while (match != null) {
-		if(match[0].match('زرد'))
-        {
-            color[cntr++] = 'yellow';
-        }
-        else if(match[0].match('قرمز'))
-        {
-            color[cntr++] = 'red';
-        }
-        else if(match[0].match('نارنجی'))
-        {
-            color[cntr++] = 'orange';
-        }
-        else
-        {
-            color[cntr++] = 'black';
-        }
+		if (match[0].match('زرد')) {
+			color[cntr++] = 'yellow';
+		} else if (match[0].match('قرمز')) {
+			color[cntr++] = 'red';
+		} else if (match[0].match('نارنجی')) {
+			color[cntr++] = 'orange';
+		} else {
+			color[cntr++] = 'black';
+		}
 		match = regex.exec(body);
 	}
 	allRows.forEach((v, i) => {
@@ -823,61 +819,61 @@ function SendTelegram() {
 	id = 118685953;
 	id = '@filtermarket1';
 
-	//bot.sendMessage(
-	//	id,
-	//	tarikh +
-	//		'<a href="https://smojmar.github.io/out_' +
-	//		date +
-	//		'/buy_' +
-	//		date +
-	//		'.html">صف های خرید</a> \n\n بیشترین حجم # \n\n @filtermarket1',
-	//	{parse_mode: 'HTML'},
-	//);
-	//bot.sendMessage(
-	//	id,
-	//	tarikh +
-	//		'<a href="https://smojmar.github.io/out_' +
-	//		date +
-	//		'/sell_' +
-	//		date +
-	//		'.html">صف های فروش</a> \n\n بیشترین حجم # \n\n @filtermarket1',
-	//	{parse_mode: 'HTML'},
-	//);
-    //
-	//bot.sendMessage(
-	//	id,
-	//	tarikh +
-	//		'<a href="https://smojmar.github.io/out_' +
-	//		date +
-	//		'/ct_' +
-	//		date +
-	//		'.html">خرید حقوقی</a> \n\n بیشترین حجم # \n بیشترین تعداد #\n\n' +
-	//		' @filtermarket1',
-	//	{parse_mode: 'HTML'},
-	//);
-	//bot.sendMessage(
-	//	id,
-	//	tarikh +
-	//		'<a href="https://smojmar.github.io/out_' +
-	//		date +
-	//		'/floatVal_' +
-	//		date +
-	//		'.html">شناوری سهم ها</a>' +
-	//		'\n\n کمترین حجم # \n\n @filtermarket1',
-	//	{parse_mode: 'HTML'},
-	//);
-    //
-	//bot.sendMessage(
-	//	id,
-	//	tarikh +
-	//		'<a href="https://smojmar.github.io/out_' +
-	//		date +
-	//		'/tagh1D_' +
-	//		date +
-	//		'.html">تغییر قیمت تمامی سهم ها</a> \n\n بیشترین تغییر # \n\n @filtermarket1',
-	//	{parse_mode: 'HTML'},
-	//);
-	
+	bot.sendMessage(
+		id,
+		tarikh +
+			'<a href="https://smojmar.github.io/out_' +
+			date +
+			'/buy_' +
+			date +
+			'.html">صف های خرید</a> \n\n بیشترین حجم # \n\n @filtermarket1',
+		{parse_mode: 'HTML'},
+	);
+	bot.sendMessage(
+		id,
+		tarikh +
+			'<a href="https://smojmar.github.io/out_' +
+			date +
+			'/sell_' +
+			date +
+			'.html">صف های فروش</a> \n\n بیشترین حجم # \n\n @filtermarket1',
+		{parse_mode: 'HTML'},
+	);
+
+	bot.sendMessage(
+		id,
+		tarikh +
+			'<a href="https://smojmar.github.io/out_' +
+			date +
+			'/ct_' +
+			date +
+			'.html">خرید حقوقی</a> \n\n بیشترین حجم # \n بیشترین تعداد #\n\n' +
+			' @filtermarket1',
+		{parse_mode: 'HTML'},
+	);
+	bot.sendMessage(
+		id,
+		tarikh +
+			'<a href="https://smojmar.github.io/out_' +
+			date +
+			'/floatVal_' +
+			date +
+			'.html">شناوری سهم ها</a>' +
+			'\n\n کمترین حجم # \n\n @filtermarket1',
+		{parse_mode: 'HTML'},
+	);
+
+	bot.sendMessage(
+		id,
+		tarikh +
+			'<a href="https://smojmar.github.io/out_' +
+			date +
+			'/tagh1D_' +
+			date +
+			'.html">تغییر قیمت تمامی سهم ها</a> \n\n بیشترین تغییر # \n\n @filtermarket1',
+		{parse_mode: 'HTML'},
+	);
+
 	bot.sendMessage(
 		id,
 		tarikh +
@@ -885,7 +881,9 @@ function SendTelegram() {
 			date +
 			'/rsi_' +
 			date +
-			'.html">مقادیر RSI برای تمامی سهم ها</a> \n\n بیشترین تغییر #' +'\n\n مقادیر کم ممکن است به علت افزایش سرمایه یاشد ' + '\n\n @filtermarket1',
+			'.html">مقادیر RSI برای تمامی سهم ها</a> \n\n بیشترین تغییر #' +
+			'\n\n مقادیر کم ممکن است به علت افزایش سرمایه یاشد ' +
+			'\n\n @filtermarket1',
 		{parse_mode: 'HTML'},
 	);
 
@@ -919,5 +917,3 @@ function SendTelegram() {
 if (sendTelegramFlag) {
 	SendTelegram();
 }
-
-
