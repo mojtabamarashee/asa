@@ -1,7 +1,7 @@
 date = '98_08_14';
-let getSymbolsDataFlag = 0;
+let getSymbolsDataFlag = 1;
 let getSymbolsPageFlag = 0;
-let sendTelegramFlag = 1;
+let sendTelegramFlag = 0;
 
 var tulind = require('tulind');
 
@@ -435,18 +435,6 @@ o.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
-var file = fs.createWriteStream('out_' + date + '/pe_' + date + '.txt');
-file.write('نماد' + '\t' + 'p/e' + '\t' + 'بازار' + '\t' + 'گروه' + '\n');
-
-allRows.sort((a, b) => a.cs - b.cs);
-allRows.forEach((v, i) => {
-	if (v.l18.match(/^([^0-9]*)$/)) {
-		if (v.pe) {
-			file.write(v.l18 + '\t' + v.pe + '\t' + v.flow + '\t' + v.cs + '\n');
-		}
-	}
-});
-
 function SafeKharid() {
 	let o = [];
 	o = allRows.filter((v, i) => Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0);
@@ -775,7 +763,7 @@ allRows.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
-var file = fs.createWriteStream('out_' + date + '/drug_' + date + '.html');
+var file = fs.createWriteStream('out_' + date + '/pe_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' +
@@ -783,10 +771,11 @@ file.write(
 		'<th>pe</th>' +
 		'<th>گروهpe</th>' +
 		'<th>بازار</th>' +
-		'<th>tsm</th>' +
+		'<th>س</th>' +
+		'<th>t</th>' +
 		'</tr></thead><tbody>\n',
 );
-allRows.filter((v, i) => v.cs == 43).forEach((v, i) => {
+allRows.forEach((v, i) => {
 	if (v.l18.match(/^([^0-9]*)$/) && v.pe && v.sectorPE) {
 		file.write(
 			'<tr><td>' +
@@ -797,10 +786,14 @@ allRows.filter((v, i) => v.cs == 43).forEach((v, i) => {
 				v.sectorPE +
 				'</td><td>' +
 				v.flow +
+				'</td>' +
+				'<td><a href="https://www.sahamyab.com/hashtag/' +
+				v.l18 +
+				'/post"><img src="http://smojmar.github.io/upload/sahamYab.png"> </a>' +
 				'</td><td>' +
 				'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
 				v.inscode +
-				'">tsm</a>' +
+				'"><img src="http://smojmar.github.io/upload/tseIcon.jpg"></a>' +
 				'</td></tr>\n',
 		);
 	}
@@ -817,7 +810,7 @@ function SendTelegram() {
 	let tarikh = '\u{1F4c5} تاریخ : ' + sp[0] + '/' + sp[1] + '/' + sp[2] + '\n\n';
 	let id;
 	id = 118685953;
-	id = '@filtermarket1';
+	//id = '@filtermarket1';
 
 	bot.sendMessage(
 		id,
@@ -886,6 +879,20 @@ function SendTelegram() {
 			'\n\n @filtermarket1',
 		{parse_mode: 'HTML'},
 	);
+	
+	bot.sendMessage(
+		id,
+		tarikh +
+			'<a href="https://smojmar.github.io/out_' +
+			date +
+			'/pe_' +
+			date +
+			'.html">مقادیر P/E برای سهم و گروه</a>' +
+			'\n\nکمترین P/E # \n\n @filtermarket1',
+		{parse_mode: 'HTML'},
+	);
+	
+	
 
 	// Matches "/echo [whatever]"
 	bot.onText(/\/echo (.+)/, (msg, match) => {
