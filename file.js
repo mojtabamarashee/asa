@@ -1,4 +1,4 @@
-date = '98_08_13';
+date = '98_08_14';
 let getSymbolsDataFlag = 0;
 let getSymbolsPageFlag = 0;
 let sendTelegramFlag = 1;
