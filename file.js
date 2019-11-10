@@ -1,7 +1,8 @@
-date = '98_08_14';
-let getSymbolsDataFlag = 1;
+date = '98_08_19';
+let getSymbolsDataFlag = 0;
 let getSymbolsPageFlag = 0;
-let sendTelegramFlag = 0;
+let sendTelegramFlag = 1;
+let outPath = '../smojmar.github.io/';
 
 var tulind = require('tulind');
 
@@ -180,7 +181,7 @@ function Navasan1D(alR) {
 }
 
 let o = Navasan1D(allRows);
-var file = fs.createWriteStream('out_' + date + '/Nav1D_' + date + '.html');
+var file = fs.createWriteStream(outPath + 'out_' + date + '/Nav1D_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' + '<th>نماد</th>' + '<th>تغییر</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
@@ -206,7 +207,7 @@ o.v.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
-var file = fs.createWriteStream('out_' + date + '/tagh1D_' + date + '.html');
+var file = fs.createWriteStream(outPath + 'out_' + date + '/tagh1D_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' + '<th>نماد</th>' + '<th>تغییر</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
@@ -302,7 +303,7 @@ function CalculateRSI(hist) {
 	return RSIndex;
 }
 
-var file = fs.createWriteStream('out_' + date + '/rsi_' + date + '.html');
+var file = fs.createWriteStream(outPath + 'out_' + date + '/rsi_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' +
@@ -376,7 +377,7 @@ function SafeForoush() {
 }
 o = SafeForoush();
 o.sort((a, b) => a.qo1 - b.qo1);
-var file = fs.createWriteStream('out_' + date + '/sell_' + date + '.html');
+var file = fs.createWriteStream(outPath + 'out_' + date + '/sell_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr><th>نماد</th>' +
@@ -443,7 +444,7 @@ function SafeKharid() {
 
 o = SafeKharid();
 o.sort((a, b) => a.qd1 - b.qd1);
-var file = fs.createWriteStream('out_' + date + '/buy_' + date + '.html');
+var file = fs.createWriteStream(outPath + 'out_' + date + '/buy_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' +
@@ -502,7 +503,7 @@ o.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
-var file = fs.createWriteStream('out_' + date + '/1wBaz_' + date + '.html');
+var file = fs.createWriteStream(outPath + 'out_' + date + '/1wBaz_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' + '<th>نماد</th>' + '<th>بازده</th>' + '<th>بازار</th>' + '<th>گروه</th></tr></thead><tbody>\n',
@@ -533,7 +534,7 @@ file.write(htmlTail);
 file.end();
 
 allRows.sort((a, b) => a.ct.Buy_CountN - b.ct.Buy_CountN);
-var file = fs.createWriteStream('out_' + date + '/ct_' + date + '.html');
+var file = fs.createWriteStream(outPath + 'out_' + date + '/ct_' + date + '.html');
 file.write(htmlHeader);
 file.write('<thead><tr><th>نماد</th>' + '\n<th>' + 'حجم</th>' + '\n<th>' + 'تعداد</th>' + '</tr></thead><tbody>\n');
 allRows.forEach((v, i) => {
@@ -573,6 +574,7 @@ let Write = (fileName, tiltle, header, data) => {
 	});
 };
 
+let ready = 1;
 function getGzipped(url, callback) {
 	// buffer to store the streamed decompression
 	var buffer = [];
@@ -580,28 +582,34 @@ function getGzipped(url, callback) {
 	var options = {
 		host: 'www.tsetmc.com',
 		path: '/loader.aspx?ParTree=151311&i=' + url,
+		timeout: 200000,
 	};
-	http.get(options, function(res) {
-		// pipe the response into the gunzip to decompress
-		var gunzip = zlib.createGunzip();
-		res.pipe(gunzip);
+	var request = http
+		.get(options, function(res) {
+			// pipe the response into the gunzip to decompress
+			var gunzip = zlib.createGunzip();
+			res.pipe(gunzip);
 
-		gunzip
-			.on('data', function(data) {
-				// decompression chunk ready, add it to the buffer
-				buffer.push(data.toString());
-			})
-			.on('end', function() {
-				// response and decompression complete, join the buffer and return
+			gunzip
+				.on('data', function(data) {
+					// decompression chunk ready, add it to the buffer
+					buffer.push(data.toString());
+				})
+				.on('end', function() {
+					// response and decompression complete, join the buffer and return
 
-				callback(null, buffer.join(''));
-			})
-			.on('error', function(e) {
-				callback(e);
-			});
-	}).on('error', function(e) {
-		callback(e);
-	});
+					callback(null, buffer.join(''));
+				})
+				.on('error', function(e) {
+					callback(e);
+				});
+		})
+		.on('error', function(e) {
+			console.log('error = ', e);
+			callback(e);
+		});
+
+	request.setTimeout(100000, () => {});
 }
 
 var http = require('http');
@@ -611,6 +619,7 @@ let globalI = 0;
 function GetSymbolsPage() {
 	var file1 = fs.createWriteStream('files/' + 'body_' + date + '.html');
 	allRows.forEach((v, i) => {
+		ready = 0;
 		getGzipped(v.inscode, function(err, data) {
 			var regex = /LVal18AFC='(.*)',D/g;
 			globalI++;
@@ -708,7 +717,7 @@ if (getSymbolsDataFlag) {
 	GetSymbolsData();
 }
 
-var file = fs.createWriteStream('out_' + date + '/floatVal_' + date + '.html');
+var file = fs.createWriteStream(outPath + 'out_' + date + '/floatVal_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' +
@@ -763,7 +772,7 @@ allRows.forEach((v, i) => {
 file.write(htmlTail);
 file.end();
 
-var file = fs.createWriteStream('out_' + date + '/pe_' + date + '.html');
+var file = fs.createWriteStream(outPath + 'out_' + date + '/pe_' + date + '.html');
 file.write(htmlHeader);
 file.write(
 	'<thead><tr>' +
@@ -810,7 +819,7 @@ function SendTelegram() {
 	let tarikh = '\u{1F4c5} تاریخ : ' + sp[0] + '/' + sp[1] + '/' + sp[2] + '\n\n';
 	let id;
 	id = 118685953;
-	//id = '@filtermarket1';
+	id = '@filtermarket1';
 
 	bot.sendMessage(
 		id,
@@ -819,80 +828,124 @@ function SendTelegram() {
 			date +
 			'/buy_' +
 			date +
-			'.html">صف های خرید</a> \n\n بیشترین حجم # \n\n @filtermarket1',
-		{parse_mode: 'HTML'},
-	);
-	bot.sendMessage(
-		id,
-		tarikh +
+			'.html">صف های خرید</a> \n\n'+
+
+
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/sell_' +
 			date +
-			'.html">صف های فروش</a> \n\n بیشترین حجم # \n\n @filtermarket1',
-		{parse_mode: 'HTML'},
-	);
+			'.html">صف های فروش</a> \n\n'+
 
-	bot.sendMessage(
-		id,
-		tarikh +
+
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/ct_' +
 			date +
-			'.html">خرید حقوقی</a> \n\n بیشترین حجم # \n بیشترین تعداد #\n\n' +
-			' @filtermarket1',
-		{parse_mode: 'HTML'},
-	);
-	bot.sendMessage(
-		id,
-		tarikh +
+			'.html">خرید حقوقی</a> \n\n' +
+
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/floatVal_' +
 			date +
 			'.html">شناوری سهم ها</a>' +
-			'\n\n کمترین حجم # \n\n @filtermarket1',
-		{parse_mode: 'HTML'},
-	);
+			'\n\n'+
 
-	bot.sendMessage(
-		id,
-		tarikh +
+
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/tagh1D_' +
 			date +
-			'.html">تغییر قیمت تمامی سهم ها</a> \n\n بیشترین تغییر # \n\n @filtermarket1',
-		{parse_mode: 'HTML'},
-	);
+			'.html">تغییر قیمت تمامی سهم ها</a> \n\n'+
 
-	bot.sendMessage(
-		id,
-		tarikh +
+
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/rsi_' +
 			date +
-			'.html">مقادیر RSI برای تمامی سهم ها</a> \n\n بیشترین تغییر #' +
-			'\n\n مقادیر کم ممکن است به علت افزایش سرمایه یاشد ' +
-			'\n\n @filtermarket1',
-		{parse_mode: 'HTML'},
-	);
-	
-	bot.sendMessage(
-		id,
-		tarikh +
+			'.html">مقادیر RSI برای تمامی سهم ها</a>' +
+			'\n\n ' +
+
+
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/pe_' +
 			date +
 			'.html">مقادیر P/E برای سهم و گروه</a>' +
-			'\n\nکمترین P/E # \n\n @filtermarket1',
+			'\n\n @filtermarket1',
+
+
 		{parse_mode: 'HTML'},
 	);
-	
-	
+	//bot.sendMessage(
+	//	id,
+	//	tarikh +
+	//		'<a href="https://smojmar.github.io/out_' +
+	//		date +
+	//		'/sell_' +
+	//		date +
+	//		'.html">صف های فروش</a> \n\n بیشترین حجم # \n\n @filtermarket1',
+	//	{parse_mode: 'HTML'},
+	//);
+
+	//bot.sendMessage(
+	//	id,
+	//	tarikh +
+	//		'<a href="https://smojmar.github.io/out_' +
+	//		date +
+	//		'/ct_' +
+	//		date +
+	//		'.html">خرید حقوقی</a> \n\n بیشترین حجم # \n بیشترین تعداد #\n\n' +
+	//		' @filtermarket1',
+	//	{parse_mode: 'HTML'},
+	//);
+	//bot.sendMessage(
+	//	id,
+	//	tarikh +
+	//		'<a href="https://smojmar.github.io/out_' +
+	//		date +
+	//		'/floatVal_' +
+	//		date +
+	//		'.html">شناوری سهم ها</a>' +
+	//		'\n\n کمترین حجم # \n\n @filtermarket1',
+	//	{parse_mode: 'HTML'},
+	//);
+
+	//bot.sendMessage(
+	//	id,
+	//	tarikh +
+	//		'<a href="https://smojmar.github.io/out_' +
+	//		date +
+	//		'/tagh1D_' +
+	//		date +
+	//		'.html">تغییر قیمت تمامی سهم ها</a> \n\n بیشترین تغییر # \n\n @filtermarket1',
+	//	{parse_mode: 'HTML'},
+	//);
+
+	//bot.sendMessage(
+	//	id,
+	//	tarikh +
+	//		'<a href="https://smojmar.github.io/out_' +
+	//		date +
+	//		'/rsi_' +
+	//		date +
+	//		'.html">مقادیر RSI برای تمامی سهم ها</a> \n\n بیشترین تغییر #' +
+	//		'\n\n مقادیر کم ممکن است به علت افزایش سرمایه یاشد ' +
+	//		'\n\n @filtermarket1',
+	//	{parse_mode: 'HTML'},
+	//);
+
+//	bot.sendMessage(
+//		id,
+//		tarikh +
+//			'<a href="https://smojmar.github.io/out_' +
+//			date +
+//			'/pe_' +
+//			date +
+//			'.html">مقادیر P/E برای سهم و گروه</a>' +
+//			'\n\nکمترین P/E # \n\n @filtermarket1',
+//		{parse_mode: 'HTML'},
+//	);
 
 	// Matches "/echo [whatever]"
 	bot.onText(/\/echo (.+)/, (msg, match) => {
