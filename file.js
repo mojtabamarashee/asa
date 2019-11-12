@@ -1,4 +1,4 @@
-date = '98_08_19';
+date = '98_08_21';
 let getSymbolsDataFlag = 0;
 let getSymbolsPageFlag = 0;
 let sendTelegramFlag = 1;
@@ -828,45 +828,34 @@ function SendTelegram() {
 			date +
 			'/buy_' +
 			date +
-			'.html">صف های خرید</a> \n\n'+
-
-
+			'.html">صف های خرید</a> \n\n' +
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/sell_' +
 			date +
-			'.html">صف های فروش</a> \n\n'+
-
-
+			'.html">صف های فروش</a> \n\n' +
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/ct_' +
 			date +
 			'.html">خرید حقوقی</a> \n\n' +
-
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/floatVal_' +
 			date +
 			'.html">شناوری سهم ها</a>' +
-			'\n\n'+
-
-
+			'\n\n' +
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/tagh1D_' +
 			date +
-			'.html">تغییر قیمت تمامی سهم ها</a> \n\n'+
-
-
+			'.html">تغییر قیمت تمامی سهم ها</a> \n\n' +
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/rsi_' +
 			date +
 			'.html">مقادیر RSI برای تمامی سهم ها</a>' +
 			'\n\n ' +
-
-
 			'<a href="https://smojmar.github.io/out_' +
 			date +
 			'/pe_' +
@@ -874,78 +863,8 @@ function SendTelegram() {
 			'.html">مقادیر P/E برای سهم و گروه</a>' +
 			'\n\n @filtermarket1',
 
-
 		{parse_mode: 'HTML'},
 	);
-	//bot.sendMessage(
-	//	id,
-	//	tarikh +
-	//		'<a href="https://smojmar.github.io/out_' +
-	//		date +
-	//		'/sell_' +
-	//		date +
-	//		'.html">صف های فروش</a> \n\n بیشترین حجم # \n\n @filtermarket1',
-	//	{parse_mode: 'HTML'},
-	//);
-
-	//bot.sendMessage(
-	//	id,
-	//	tarikh +
-	//		'<a href="https://smojmar.github.io/out_' +
-	//		date +
-	//		'/ct_' +
-	//		date +
-	//		'.html">خرید حقوقی</a> \n\n بیشترین حجم # \n بیشترین تعداد #\n\n' +
-	//		' @filtermarket1',
-	//	{parse_mode: 'HTML'},
-	//);
-	//bot.sendMessage(
-	//	id,
-	//	tarikh +
-	//		'<a href="https://smojmar.github.io/out_' +
-	//		date +
-	//		'/floatVal_' +
-	//		date +
-	//		'.html">شناوری سهم ها</a>' +
-	//		'\n\n کمترین حجم # \n\n @filtermarket1',
-	//	{parse_mode: 'HTML'},
-	//);
-
-	//bot.sendMessage(
-	//	id,
-	//	tarikh +
-	//		'<a href="https://smojmar.github.io/out_' +
-	//		date +
-	//		'/tagh1D_' +
-	//		date +
-	//		'.html">تغییر قیمت تمامی سهم ها</a> \n\n بیشترین تغییر # \n\n @filtermarket1',
-	//	{parse_mode: 'HTML'},
-	//);
-
-	//bot.sendMessage(
-	//	id,
-	//	tarikh +
-	//		'<a href="https://smojmar.github.io/out_' +
-	//		date +
-	//		'/rsi_' +
-	//		date +
-	//		'.html">مقادیر RSI برای تمامی سهم ها</a> \n\n بیشترین تغییر #' +
-	//		'\n\n مقادیر کم ممکن است به علت افزایش سرمایه یاشد ' +
-	//		'\n\n @filtermarket1',
-	//	{parse_mode: 'HTML'},
-	//);
-
-//	bot.sendMessage(
-//		id,
-//		tarikh +
-//			'<a href="https://smojmar.github.io/out_' +
-//			date +
-//			'/pe_' +
-//			date +
-//			'.html">مقادیر P/E برای سهم و گروه</a>' +
-//			'\n\nکمترین P/E # \n\n @filtermarket1',
-//		{parse_mode: 'HTML'},
-//	);
 
 	// Matches "/echo [whatever]"
 	bot.onText(/\/echo (.+)/, (msg, match) => {
@@ -977,3 +896,43 @@ function SendTelegram() {
 if (sendTelegramFlag) {
 	SendTelegram();
 }
+
+var file = fs.createWriteStream(outPath + 'out_' + date + '/min60D_' + date + '.html');
+file.write(htmlHeader);
+file.write(
+	'<thead><tr>' +
+		'<th>نماد</th>' +
+		'<th>min60</th>' +
+		'<th>max60</th>' +
+		'<th>بازار</th>' +
+		'<th>س</th>' +
+		'<th>t</th>' +
+		'</tr></thead><tbody>\n',
+);
+allRows.forEach((v, i) => {
+	if (v.l18.match(/^([^0-9]*)$/)) {
+		if (v.pc <= Math.min.apply(null, v.hist.map(v => v.PClosing))) {
+			file.write(
+				'<tr><td>' +
+					v.l18 +
+					'</td><td>' +
+					Math.min.apply(null, v.hist.map(v => v.PClosing)) +
+					'</td><td>' +
+					Math.max.apply(null, v.hist.map(v => v.PClosing)) +
+					'</td><td>' +
+					v.flow +
+					'</td>' +
+					'<td><a href="https://www.sahamyab.com/hashtag/' +
+					v.l18 +
+					'/post"><img src="http://smojmar.github.io/upload/sahamYab.png"> </a>' +
+					'</td><td>' +
+					'<a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
+					v.inscode +
+					'"><img src="http://smojmar.github.io/upload/tseIcon.jpg"></a>' +
+					'</td></tr>\n',
+			);
+		}
+	}
+});
+file.write(htmlTail);
+file.end();
