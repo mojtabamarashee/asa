@@ -1,11 +1,15 @@
-date = '98_08_21';
-let getSymbolsDataFlag = 0;
+date = '98_09_20';
+let getSymbolsDataFlag = 1;
 let getSymbolsPageFlag = 0;
 let sendTelegramFlag = 1;
+let getHistDataFlag = 0;
 let outPath = '../smojmar.github.io/';
 
 var tulind = require('tulind');
+var http = require('http');
+zlib = require('zlib');
 
+//let h = GetHistData('27952969918967492');
 function test() {
 	console.log('salam');
 	const http = new XMLHttpRequest();
@@ -316,27 +320,33 @@ file.write(
 		'<th>t</th>' +
 		'</tr></thead><tbody>\n',
 );
+
+allRows.forEach((v, i) => {
+	let rsiAll = [];
+	if (v.hist && v.hist[15]) {
+		let data = v.hist.map(v => v.PClosing).reverse();
+		data[data.length] = v.pc;
+		tulind.indicators.rsi.indicator([data], [14], function(err, results) {
+			rsiAll = results[0];
+		});
+		let rsi = numeral(rsiAll[rsiAll.length - 1]).format();
+		v.rsi = rsi;
+	}
+});
+
 allRows.forEach((v, i) => {
 	if (v.hist && v.hist[50]) {
 		if (v.l18.match(/^([^0-9]*)$/)) {
-			let data = v.hist.map(v => v.PClosing).reverse();
-			data[data.length] = v.pc;
-			//if (v.l18 == 'شپنا') console.log(data);
-			tulind.indicators.rsi.indicator([data], [14], function(err, results) {
-				v.rsi = results[0];
-			});
-
-			color = GetColor(v.cs);
-			let rsi = numeral(v.rsi[v.rsi.length - 1]).format();
 			let bazColor = GetBazColor(v);
-			if (rsi > 0) {
+			color = GetColor(v.cs);
+			if (v.rsi > 0) {
 				file.write(
 					'<tr>' +
 						'<td>' +
 						v.l18 +
 						'</td>' +
 						'<td>' +
-						+rsi +
+						+v.rsi +
 						'</td>' +
 						'<td style="color:' +
 						bazColor +
@@ -573,6 +583,12 @@ let Write = (fileName, tiltle, header, data) => {
 		file.write('\t');
 	});
 };
+allRows.forEach((v, i) => {
+	v.name = v.l18
+		.toString()
+		.replace('ي', 'ی')
+		.replace('ك', 'ک');
+});
 
 let ready = 1;
 function getGzipped(url, callback) {
@@ -604,16 +620,14 @@ function getGzipped(url, callback) {
 					callback(e);
 				});
 		})
+		.setTimeout(100000, e => {
+			console.log('time');
+		})
 		.on('error', function(e) {
-			console.log('error = ', e);
+			console.log('error = ' + url);
 			callback(e);
 		});
-
-	request.setTimeout(100000, () => {});
 }
-
-var http = require('http');
-zlib = require('zlib');
 
 let globalI = 0;
 function GetSymbolsPage() {
@@ -625,6 +639,7 @@ function GetSymbolsPage() {
 			globalI++;
 			console.log('globalI = ', globalI);
 			if (data) {
+				v.body = data;
 				file1.write(data + '\n\n\n');
 			}
 		});
@@ -664,6 +679,18 @@ function GetSymbolsData() {
 		match = regex.exec(body);
 	}
 
+	var ma = /بازار پايه زرد فرابورس/g;
+	bodies = body.split('<!doctype html>');
+	var file = fs.createWriteStream('color.txt');
+	allRows.forEach((v, i) => {
+		bd = bodies.find((v1, i1) => v1.match("InsCode='" + v.inscode));
+		//v.body = bd;
+		v.color = 'y';
+		//if (v.body.match(ma)) {
+		//	file.write(v.l18 + '\n');
+		//}
+	});
+
 	var regex = /,ZTitad=(.*?),CI/g;
 	cntr = 0;
 	match = regex.exec(body);
@@ -698,7 +725,7 @@ function GetSymbolsData() {
 			color[cntr++] = 'yellow';
 		} else if (match[0].match('قرمز')) {
 			color[cntr++] = 'red';
-		} else if (match[0].match('نارنجی')) {
+		} else if (match[0].match('نارنج')) {
 			color[cntr++] = 'orange';
 		} else {
 			color[cntr++] = 'black';
@@ -936,3 +963,165 @@ allRows.forEach((v, i) => {
 });
 file.write(htmlTail);
 file.end();
+
+var file = fs.createWriteStream(outPath + 'out_' + date + '/filter_' + date + '.txt');
+allRows
+	.filter((v, i) => v.pe < 0.7 * v.sectorPE)
+	.filter((v, i) => v.pe > 0)
+	.filter((v, i) => v.flow < 3)
+	.filter((v, i) => v.floatVal < 10)
+	.filter((v, i) => v.totalVol < 400e6)
+	.filter((v, i) => v.pc < 0.8 * Math.max.apply(null, v.hist.map(v => v.PClosing)))
+	.forEach((v, i) => {
+		file.write(v.l18 + '\n');
+	});
+
+allRows.forEach((v, i) => {
+	allRows[i].afzayeshSarmayeh = 0;
+	for (i1 = 0; i1 < v.hist.length - 1; i1++) {
+		if (Math.abs(v.hist[i1].PClosing - v.hist[i1 + 1].PClosing) / v.hist[i1 + 1].PClosing > 0.2) {
+			allRows[i].afzayeshSarmayeh = 1;
+		}
+	}
+});
+
+var file = fs.createWriteStream(outPath + 'out_' + date + '/rsi_' + date + '.txt');
+allRows
+	.filter((v, i) => v.l18.match(/^([^0-9]*)$/))
+	.filter((v, i) => v.pc < 0.8 * Math.max.apply(null, v.hist.map(v => v.PClosing)))
+	.filter((v, i) => v.pe && v.pe >= 0)
+	.filter((v, i) => v.afzayeshSarmayeh == 0)
+	.filter((v, i) => v.pe < 0.7 * v.sectorPE)
+	//.filter((v, i) => v.flow < 7)
+	//.filter((v, i) => v.rsi && v.rsi < 50 && v.rsi > 0)
+	//.filter((v, i) => v.totalVol < 700e6)
+	//.filter((v, i) => v.floatVal < 30)
+	//.sort((a, b) => {
+	//	maxa = Math.max.apply(null, a.hist.map(v => a.PClosing));
+	//    diffa = (max - a.pc) / max * 100;
+	//})
+	.forEach((v, i) => {
+		max = Math.max.apply(null, v.hist.map(v => v.PClosing));
+		file.write(
+			v.l18 +
+				',\t' +
+				v.flow +
+				'\t' +
+				v.rsi +
+				'\t' +
+				v.cs +
+				'\t' +
+				numeral(((max - v.pc) / max) * 100).format() +
+				'\n',
+		);
+	});
+
+var file = fs.createWriteStream(outPath + 'out_' + date + '/pe_' + date + '.txt');
+t = allRows
+	.filter((v, i) => v.cs == 44)
+	.filter((v, i) => v.pe <= v.sectorPE && v.pe > 0)
+	.sort((a, b) => a.pe - b.pe)
+	.forEach((v, i) => {
+		console.log(v.sectorPE);
+		file.write(v.l18 + ',\t' + v.pe + '\t' + v.flow + '\n');
+	});
+
+//file.write(t[0].l18 + ',\t' + t[0].pe + '\n');
+//
+
+var file = fs.createWriteStream(outPath + 'out_' + date + '/ser_' + date + '.txt');
+t = allRows
+	.filter((v, i) => v.hist.length > 10)
+	.filter((v, j) => {
+		flag = true;
+		for (i = 0; i < 8; i++) {
+			if (!(v.hist[i].PClosing < v.hist[i + 1].PClosing)) flag = false;
+		}
+
+		return flag;
+	})
+	.forEach((v, i) => {
+		file.write(v.l18 + ',\t' + v.pe + '\t' + v.flow + '\n');
+	});
+
+allRows.forEach((v, i) => {
+	max = Math.max.apply(null, v.hist.map(v => v.PClosing));
+	v.mm = numeral(-((max - v.pc) / max) * 100).format();
+
+	n = 5;
+	if (v.hist[n]) v.d5 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
+
+	n = 10;
+	if (v.hist[n]) v.d10 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
+
+	n = 30;
+	if (v.hist[n]) v.d30 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
+
+	n = 59;
+	if (v.hist[n]) v.d60 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
+
+	v.hist = [];
+	v.per = [];
+	v.perSum = [];
+	v.ct = [];
+});
+fs.writeFileSync('../onePage/public/allRows.js', 'allRows=' + JSON.stringify(allRows));
+fs.writeFileSync('../smojmar.github.io/allRows.js', 'allRows=' + JSON.stringify(allRows));
+
+async function GetAllHist() {
+	for (i = 0; i < allRows.length; i++) {
+		v = allRows[i];
+		if (v.l18.match(/^([^0-9]*)$/)) {
+			console.log('ibefore = ', i);
+			hist = await GetOneHist(v);
+			console.log('hist = ', hist.length);
+			console.log('iafter = ', i);
+		}
+	}
+}
+
+//GetAllHist();
+var file = fs.createWriteStream('hist.txt');
+async function GetOneHist(v) {
+	return new Promise(function(resolve, ref) {
+		var buffer = [];
+		var options = {
+			host: 'www.tsetmc.com',
+			path: '/tsev2/data/InstTradeHistory.aspx?i=' + v.inscode + '&Top=999999&A=0',
+			timeout: 20000,
+		};
+		var request = http
+			.get(options, function(res) {
+				var gunzip = zlib.createGunzip();
+				res.pipe(gunzip);
+
+				gunzip
+					.on('data', function(data) {
+						// decompression chunk ready, add it to the buffer
+						buffer.push(data.toString());
+					})
+					.on('end', function() {
+						// response and decompression complete, join the buffer and return
+						hist = buffer.join('');
+						//file.write(buffer.join(''));
+						v.hist = buffer.join('');
+						resolve(hist);
+						//callback(null, buffer.join(''));
+					})
+					.on('error', function(e) {
+						//console.log(e);
+						resolve([]);
+					});
+			})
+			.setTimeout(20000, e => {
+				resolve([]);
+				console.log('time');
+			})
+			.on('error', function(e) {
+				console.log('error = ');
+				//file.write('error = ' + v.l18 + ':::' + e + '\n');
+			});
+	});
+}
+
+//

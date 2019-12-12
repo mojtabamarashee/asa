@@ -1,4 +1,4 @@
-{
+rawData = {
     "persianOrder": {
         "آ": "0",
         "ا": "1",
