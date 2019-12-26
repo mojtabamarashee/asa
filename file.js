@@ -1,14 +1,20 @@
-date = '98_09_20';
-let getSymbolsDataFlag = 1;
+date = '98_10_04';
 let getSymbolsPageFlag = 0;
-let sendTelegramFlag = 1;
+let getSymbolsDataFlag = 1;
+let getSymbolsPriceHistFlag = 1;
+let sendTelegramFlag = 0;
 let getHistDataFlag = 0;
 let outPath = '../smojmar.github.io/';
+const axios = require('axios');
 
 var tulind = require('tulind');
 var http = require('http');
 zlib = require('zlib');
+const fs = require('fs');
 
+if (!fs.existsSync(outPath + 'out_' + date)) {
+	fs.mkdirSync(outPath + 'out_' + date);
+}
 //let h = GetHistData('27952969918967492');
 function test() {
 	console.log('salam');
@@ -48,7 +54,6 @@ GetBazColor = v => v.color;
 		a.dispatchEvent(e);
 	};
 })(console);
-//console.save(mw, 'mw.txt');
 
 htmlHeader = `
 <!DOCTYPE html>
@@ -91,13 +96,19 @@ $(document).ready(function() {
 </html>
 `;
 
-const fs = require('fs');
 GetColor = num => (num * 10).toString(16);
 var numeral = require('numeral');
 numeral.defaultFormat('0,0.[00]');
+
 let rawdata = fs.readFileSync('files/mw_' + date + '.txt');
 let mw1 = JSON.parse(rawdata);
-let allRows = Object.values(mw1.AllRows);
+
+let allRows;
+try {
+	allRows = JSON.parse(fs.readFileSync('allRows_' + date + '.js', 'utf8'));
+} catch (err) {
+	allRows = Object.values(mw1.AllRows);
+}
 
 let instHistory = Object.values(mw1.InstHistory);
 let keys = Object.keys(mw1.InstHistory);
@@ -654,6 +665,7 @@ function GetSymbolsData() {
 	let floatVal = [];
 	let totalVol = [];
 	let sectorPE = [];
+	let csName = [];
 	let insCode = [];
 	let color = [];
 	let cntr = 0;
@@ -717,6 +729,14 @@ function GetSymbolsData() {
 		match = regex.exec(body);
 	}
 
+	var regex = /LSecVal='(.*?)',Cg/g;
+	cntr = 0;
+	match = regex.exec(body);
+	while (match != null) {
+		csName[cntr++] = match[1];
+		match = regex.exec(body);
+	}
+
 	var regex = /,Title='.*',Fa/g;
 	cntr = 0;
 	match = regex.exec(body);
@@ -737,6 +757,7 @@ function GetSymbolsData() {
 		allRows[i].floatVal = floatVal[index];
 		allRows[i].totalVol = totalVol[index];
 		allRows[i].sectorPE = sectorPE[index];
+		allRows[i].csName = csName[index];
 		allRows[i].color = color[index];
 	});
 }
@@ -978,9 +999,11 @@ allRows
 
 allRows.forEach((v, i) => {
 	allRows[i].afzayeshSarmayeh = 0;
-	for (i1 = 0; i1 < v.hist.length - 1; i1++) {
-		if (Math.abs(v.hist[i1].PClosing - v.hist[i1 + 1].PClosing) / v.hist[i1 + 1].PClosing > 0.2) {
-			allRows[i].afzayeshSarmayeh = 1;
+	if (v.hist) {
+		for (i1 = 0; i1 < v.hist.length - 1; i1++) {
+			if (Math.abs(v.hist[i1].PClosing - v.hist[i1 + 1].PClosing) / v.hist[i1 + 1].PClosing > 0.2) {
+				allRows[i].afzayeshSarmayeh = 1;
+			}
 		}
 	}
 });
@@ -1022,7 +1045,6 @@ t = allRows
 	.filter((v, i) => v.pe <= v.sectorPE && v.pe > 0)
 	.sort((a, b) => a.pe - b.pe)
 	.forEach((v, i) => {
-		console.log(v.sectorPE);
 		file.write(v.l18 + ',\t' + v.pe + '\t' + v.flow + '\n');
 	});
 
@@ -1030,98 +1052,153 @@ t = allRows
 //
 
 var file = fs.createWriteStream(outPath + 'out_' + date + '/ser_' + date + '.txt');
-t = allRows
-	.filter((v, i) => v.hist.length > 10)
-	.filter((v, j) => {
-		flag = true;
-		for (i = 0; i < 8; i++) {
-			if (!(v.hist[i].PClosing < v.hist[i + 1].PClosing)) flag = false;
-		}
-
-		return flag;
-	})
-	.forEach((v, i) => {
-		file.write(v.l18 + ',\t' + v.pe + '\t' + v.flow + '\n');
-	});
+//t = allRows
+//	//.filter((v, i) => v.hist.length > 10)
+//	.filter((v, j) => {
+//		flag = true;
+//		for (i = 0; i < 8; i++) {
+//			if (!(v.hist[i].PClosing < v.hist[i + 1].PClosing)) flag = false;
+//		}
+//
+//		return flag;
+//	})
+//	.forEach((v, i) => {
+//		file.write(v.l18 + ',\t' + v.pe + '\t' + v.flow + '\n');
+//	});
 
 allRows.forEach((v, i) => {
-	max = Math.max.apply(null, v.hist.map(v => v.PClosing));
-	v.mm = numeral(-((max - v.pc) / max) * 100).format();
+	if (v.hist) {
+		max = Math.max.apply(null, v.hist.map(v => v.PClosing));
+		v.mm = numeral(-((max - v.pc) / max) * 100).format();
 
-	n = 5;
-	if (v.hist[n]) v.d5 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
+		n = 5;
+		if (v.hist[n]) v.d5 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
 
-	n = 10;
-	if (v.hist[n]) v.d10 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
+		n = 10;
+		if (v.hist[n]) v.d10 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
 
-	n = 30;
-	if (v.hist[n]) v.d30 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
+		n = 30;
+		if (v.hist[n]) v.d30 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
 
-	n = 59;
-	if (v.hist[n]) v.d60 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
+		n = 59;
+		if (v.hist[n]) v.d60 = numeral(-((v.hist[n].PClosing - v.pc) / v.hist[n].PClosing) * 100).format();
 
-	v.hist = [];
-	v.per = [];
-	v.perSum = [];
-	v.ct = [];
+		v.hist = [];
+		v.per = [];
+		v.perSum = [];
+	}
 });
-fs.writeFileSync('../onePage/public/allRows.js', 'allRows=' + JSON.stringify(allRows));
-fs.writeFileSync('../smojmar.github.io/allRows.js', 'allRows=' + JSON.stringify(allRows));
 
-async function GetAllHist() {
-	for (i = 0; i < allRows.length; i++) {
-		v = allRows[i];
-		if (v.l18.match(/^([^0-9]*)$/)) {
-			console.log('ibefore = ', i);
-			hist = await GetOneHist(v);
-			console.log('hist = ', hist.length);
-			console.log('iafter = ', i);
-		}
+let remainList = allRows.filter(v => v.l18.match(/^([^0-9]*)$/));
+var file = fs.createWriteStream('error.txt');
+maxPriceCntr = 1;
+if (getSymbolsPriceHistFlag) {
+	for (i1 = 0; i1 < maxPriceCntr; i1++) {
+		allRows.forEach((v, i) => {
+			if (v.l18.match(/^([^0-9]*)$/) && !v.pClosingHist) {
+				url = 'http://www.tsetmc.com/tsev2/data/InstTradeHistory.aspx?i=' + v.inscode + '&Top=999999&A=0';
+				axios
+					.get(url)
+					.then(response => {
+						console.log('iok = ', i);
+						v.pClosingHist = response.data
+							.split(';')
+							.map(v => v.split('@')[1])
+							.map(v => Number(v));
+					})
+					.catch(function(error) {
+						console.log('ierror = ', i);
+						fs.appendFile('error.txt', v.l18 + '\n', () => {});
+					});
+			}
+		});
 	}
 }
 
+setTimeout(() => {
+	fs.writeFileSync('../onePage/public/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
+	fs.writeFileSync('../smojmar.github.io/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
+	fs.writeFileSync('allRows_' + date + '.js', JSON.stringify(allRows));
+	fs.writeFile('remain', remainList.map(v => v.name), () => {});
+	console.log('save');
+}, 20000);
+
+//async function GetAllHist() {
+//	for (i = 0; i < allRows.length; i++) {
+//		v = allRows[i];
+//		if (v.l18.match(/^([^0-9]*)$/)) {
+//			hist = GetOneHist(v);
+//		}
+//	}
+//}
+//var async = require('async');
+//async.each(allRows, (v)=>GetOneHist(v), ()=>{
+//    console.log("err3 = ");
+//})
+
+//allRows.forEach((v, i) => {
+//	GetOneHist2(v);
+//});
+
 //GetAllHist();
 var file = fs.createWriteStream('hist.txt');
-async function GetOneHist(v) {
-	return new Promise(function(resolve, ref) {
-		var buffer = [];
-		var options = {
-			host: 'www.tsetmc.com',
-			path: '/tsev2/data/InstTradeHistory.aspx?i=' + v.inscode + '&Top=999999&A=0',
-			timeout: 20000,
-		};
-		var request = http
-			.get(options, function(res) {
-				var gunzip = zlib.createGunzip();
-				res.pipe(gunzip);
+let globalG = 0;
 
-				gunzip
-					.on('data', function(data) {
-						// decompression chunk ready, add it to the buffer
-						buffer.push(data.toString());
-					})
-					.on('end', function() {
-						// response and decompression complete, join the buffer and return
-						hist = buffer.join('');
-						//file.write(buffer.join(''));
-						v.hist = buffer.join('');
-						resolve(hist);
-						//callback(null, buffer.join(''));
-					})
-					.on('error', function(e) {
-						//console.log(e);
-						resolve([]);
-					});
-			})
-			.setTimeout(20000, e => {
-				resolve([]);
-				console.log('time');
-			})
-			.on('error', function(e) {
-				console.log('error = ');
-				//file.write('error = ' + v.l18 + ':::' + e + '\n');
-			});
-	});
+async function GetOneHist2(v) {
+	let url = 'www.tsetmc.com/tsev2/data/InstTradeHistory.aspx?i=' + v.inscode + '&Top=999999&A=0';
+	res = await fetch(url);
+	if (res.ok) {
+		console.log('v = ', v.l18);
+		successed.push(v);
+	} else {
+		failed.push(v);
+	}
 }
 
+//function GetOneHist(v) {
+//	{
+//		var buffer = [];
+//		var options = {
+//			host: 'www.tsetmc.com',
+//			path: '/tsev2/data/InstTradeHistory.aspx?i=' + v.inscode + '&Top=999999&A=0',
+//			timeout: 5000,
+//		};
+//		var request = http
+//			.get(options, function(res) {
+//				var gunzip = zlib.createGunzip();
+//				res.pipe(gunzip);
 //
+//				gunzip
+//					.on('data', function(data) {
+//						// decompression chunk ready, add it to the buffer
+//						buffer.push(data);
+//					})
+//					.on('end', function() {
+//						// response and decompression complete, join the buffer and return
+//						//file.write('\n' + v.l18 + buffer.join(''));
+//						v.hist = buffer.join('');
+//                        console.log("globalG = ", globalG);
+//                        globalG ++;
+//						//callback(null, buffer.join(''));
+//					})
+//					.on('error', function(e) {
+//                        console.log("error = ");
+//						console.log(e);
+//					});
+//			})
+//			.setTimeout(20000, e => {
+//				console.log('time');
+//			})
+//			.on('error', function(e) {
+//				console.log('error = ');
+//				//file.write('error = ' + v.l18 + ':::' + e + '\n');
+//			});
+//	}
+//}
+
+//
+//
+var file = fs.createWriteStream('csName.txt');
+allRows.forEach(v => {
+	file.write(v.csName + '\n');
+});
