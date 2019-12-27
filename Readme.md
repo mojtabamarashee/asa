@@ -13,7 +13,7 @@ https://online.agah.com/TradingView/history?symbol=IRO1BMLT0001-1&resolution=D&f
 http://m.tsetmc.com/tsev2/data/InstTradeHistory.aspx?i=27952969918967492&Top=999999&A=0
 
 
-http://www.tsetmc.com/Loader.aspx?ParTree=151311&i=12329519546621752#
+http://tsetmc.com/tsev2/chart/data/Financial.aspx?i=12329519546621752&t=ph&a=1
 
 
 ```javascript
