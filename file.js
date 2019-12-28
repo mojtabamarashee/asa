@@ -1268,7 +1268,7 @@ setTimeout(() => {
   console.log('save');
 
   exec(
-    'git -C ../smojmar.github.io commit -am' + date + '&&git -C ../smojmar.github.io push --all',
+    'git -C ../smojmar.github.io commit -am ' + date,
     (err, stdout, stderr) => {
       if (err) {
         console.log("err = ", err);
@@ -1289,7 +1289,7 @@ setTimeout(() => {
     },
   );
   exec(
-    'git commit -am' + date,
+    'git commit -am ' + date,
     (err, stdout, stderr) => {
       if (err) {
         console.log("err = ", err);
