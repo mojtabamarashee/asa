@@ -1279,7 +1279,29 @@ setTimeout(() => {
   );
 
   exec(
+    'git -C ../smojmar.github.io push --all' + date,
+    (err, stdout, stderr) => {
+      if (err) {
+        console.log("err = ", err);
+        return ;
+      }
+      console.log(stdout);
+    },
+  );
+  exec(
     'git commit -am' + date,
+    (err, stdout, stderr) => {
+      if (err) {
+        console.log("err = ", err);
+        return ;
+      }
+      console.log(stdout);
+    },
+  );
+
+
+  exec(
+    'git push --all' + date,
     (err, stdout, stderr) => {
       if (err) {
         console.log("err = ", err);
