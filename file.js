@@ -1279,7 +1279,7 @@ setTimeout(() => {
   );
 
   exec(
-    'git -C ../smojmar.github.io push --all' + date,
+    'git -C ../smojmar.github.io push --all',
     (err, stdout, stderr) => {
       if (err) {
         console.log("err = ", err);
@@ -1301,7 +1301,7 @@ setTimeout(() => {
 
 
   exec(
-    'git push --all' + date,
+    'git push --all',
     (err, stdout, stderr) => {
       if (err) {
         console.log("err = ", err);
