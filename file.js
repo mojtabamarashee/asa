@@ -1250,6 +1250,8 @@ allRows.forEach((v, i) => {
     });
     let rsi = numeral(rsiAll[rsiAll.length - 1]).format();
     v.rsi = rsi;
+      if(v.l18='شگل')
+      console.log("pcl = ", v.pClosingHist[200]);
   }
 });
 
