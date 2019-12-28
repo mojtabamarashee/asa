@@ -1203,6 +1203,7 @@ allRows.forEach((v, i) => {
   if (v.pClosingHist) {
     max = Math.max(...v.pClosingHist.slice(0, 60));
     v.mm = numeral(-((max - v.pc) / max) * 100).format();
+    if (v.l18 == 'شگل') console.log('pcl = ', v.pClosingHist[200]);
 
     if (v.l18 == 'شمواد') {
       console.log('max = ', max);
@@ -1250,8 +1251,6 @@ allRows.forEach((v, i) => {
     });
     let rsi = numeral(rsiAll[rsiAll.length - 1]).format();
     v.rsi = rsi;
-      if(v.l18='شگل')
-      console.log("pcl = ", v.pClosingHist[200]);
   }
 });
 
@@ -1273,46 +1272,35 @@ setTimeout(() => {
     'git -C ../smojmar.github.io commit -am ' + date,
     (err, stdout, stderr) => {
       if (err) {
-        console.log("err = ", err);
-        return ;
+        console.log('err = ', err);
+        return;
       }
       console.log(stdout);
     },
   );
 
-  exec(
-    'git -C ../smojmar.github.io push --all',
-    (err, stdout, stderr) => {
-      if (err) {
-        console.log("err = ", err);
-        return ;
-      }
-      console.log(stdout);
-    },
-  );
-  exec(
-    'git commit -am ' + date,
-    (err, stdout, stderr) => {
-      if (err) {
-        console.log("err = ", err);
-        return ;
-      }
-      console.log(stdout);
-    },
-  );
+  exec('git -C ../smojmar.github.io push --all', (err, stdout, stderr) => {
+    if (err) {
+      console.log('err = ', err);
+      return;
+    }
+    console.log(stdout);
+  });
+  exec('git commit -am ' + date, (err, stdout, stderr) => {
+    if (err) {
+      console.log('err = ', err);
+      return;
+    }
+    console.log(stdout);
+  });
 
-
-  exec(
-    'git push --all',
-    (err, stdout, stderr) => {
-      if (err) {
-        console.log("err = ", err);
-        return ;
-      }
-      console.log(stdout);
-    },
-  );
-
+  exec('git push --all', (err, stdout, stderr) => {
+    if (err) {
+      console.log('err = ', err);
+      return;
+    }
+    console.log(stdout);
+  });
 }, 10000);
 
 var file = fs.createWriteStream('hist.txt');
