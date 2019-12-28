@@ -1203,9 +1203,9 @@ allRows.forEach((v, i) => {
   if (v.pClosingHist) {
     max = Math.max(...v.pClosingHist.slice(0, 60));
     v.mm = numeral(-((max - v.pc) / max) * 100).format();
-    if (v.l18 == 'شگل') console.log('pcl = ', v.pClosingHist[200]);
 
-    if (v.l18 == 'شمواد') {
+    if (v.l18 == 'شگل') {
+      console.log('pcl = ', v.pClosingHist[200]);
       console.log('max = ', max);
       console.log('mm = ', v.mm);
       console.log('pc = ', v.pc);
