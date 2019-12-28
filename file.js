@@ -1301,7 +1301,7 @@ setTimeout(() => {
     }
     console.log(stdout);
   });
-}, 10000);
+}, 20000);
 
 var file = fs.createWriteStream('hist.txt');
 let globalG = 0;
