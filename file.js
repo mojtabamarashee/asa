@@ -1078,30 +1078,33 @@ let remainList = allRows.filter(v => v.l18.match(/^([^0-9]*)$/));
 var file = fs.createWriteStream('error.txt');
 maxPriceCntr = 1;
 let pr = [];
-if (getSymbolsPriceHistFlag) {
-	allRows.forEach((v, i) => {
-		if (v.l18.match(/^([^0-9]*)$/) && !v.pClosingHist) {
-			url = 'http://tsetmc.com/tsev2/chart/data/Financial.aspx?i=' + v.inscode + '&t=ph&a=1';
-			pr.push(
-				axios
-					.get(url)
-					//	.then(response => {
-					//		console.log('histOk = ', i);
-					//		v.pClosingHist = response.data
-					//			.split(';')
-					//			.map(v => v.split(','))
-					//			.map(v => v[6])
-					//			.map(v => Number(v))
-					//			.reverse();
-					//	})
-					.catch(error => null),
-			);
-		} else {
-			//console.log('histExist = ', i);
-		}
-	});
-	axios.all(pr).then(res => console.log(res));
+async function GetHistData() {
+	if (getSymbolsPriceHistFlag) {
+		allRows.forEach((v, i) => {
+			if (v.l18.match(/^([^0-9]*)$/) && !v.pClosingHist) {
+				url = 'http://tsetmc.com/tsev2/chart/data/Financial.aspx?i=' + v.inscode + '&t=ph&a=1';
+				pr.push(
+					axios
+						.get(url)
+						//	.then(response => {
+						//		console.log('histOk = ', i);
+						//		v.pClosingHist = response.data
+						//			.split(';')
+						//			.map(v => v.split(','))
+						//			.map(v => v[6])
+						//			.map(v => Number(v))
+						//			.reverse();
+						//	})
+						.catch(error => null),
+				);
+			} else {
+				//console.log('histExist = ', i);
+			}
+		});
+		await axios.all(pr).then(res => console.log(res));
+	}
 }
+GetHistData();
 
 console.log('here');
 console.log('here');
