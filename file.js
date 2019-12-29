@@ -1,7 +1,7 @@
-date = '98_10_07';
-let getSymbolsPageFlag = 0;
-let getSymbolsDataFlag = 1;
-let getSymbolsPriceHistFlag = 1;
+date = '98_10_08';
+let getSymbolsPageFlag = 1;
+let getSymbolsDataFlag = 0;
+let getSymbolsPriceHistFlag = 0;
 let sendTelegramFlag = 0;
 let getHistDataFlag = 0;
 let outPath = '../smojmar.github.io/';
