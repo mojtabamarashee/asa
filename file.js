@@ -1084,6 +1084,7 @@ async function GetHistData() {
 		allRows.forEach((v, i) => {
 			if (v.l18.match(/^([^0-9]*)$/)) {
 				url = 'http://tsetmc.com/tsev2/chart/data/Financial.aspx?i=' + v.inscode + '&t=ph&a=1';
+                console.log("url = ", url);
 				pr.push(
 					() => axios.get(url),
 					//.then(response => {
