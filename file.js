@@ -1155,43 +1155,41 @@ allRows.forEach((v, i) => {
 
 const {exec} = require('child_process');
 
-setTimeout(() => {
-	fs.writeFileSync('../onePage/public/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
-	fs.writeFileSync('../smojmar.github.io/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
-	fs.writeFileSync('allRows_' + date + '.js', JSON.stringify(allRows));
-	console.log('save');
+fs.writeFileSync('../onePage/public/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
+fs.writeFileSync('../smojmar.github.io/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
+fs.writeFileSync('allRows_' + date + '.js', JSON.stringify(allRows));
+console.log('save');
 
-	exec('git -C ../smojmar.github.io commit -am ' + date, (err, stdout, stderr) => {
-		if (err) {
-			console.log('err = ', err);
-			return;
-		}
-		console.log(stdout);
-	});
+exec('git -C ../smojmar.github.io commit -am ' + date, (err, stdout, stderr) => {
+	if (err) {
+		console.log('err = ', err);
+		return;
+	}
+	console.log(stdout);
+});
 
-	exec('git -C ../smojmar.github.io push --all', (err, stdout, stderr) => {
-		if (err) {
-			console.log('err = ', err);
-			return;
-		}
-		console.log(stdout);
-	});
-	exec('git commit -am ' + date, (err, stdout, stderr) => {
-		if (err) {
-			console.log('err = ', err);
-			return;
-		}
-		console.log(stdout);
-	});
+exec('git -C ../smojmar.github.io push --all', (err, stdout, stderr) => {
+	if (err) {
+		console.log('err = ', err);
+		return;
+	}
+	console.log(stdout);
+});
+exec('git commit -am ' + date, (err, stdout, stderr) => {
+	if (err) {
+		console.log('err = ', err);
+		return;
+	}
+	console.log(stdout);
+});
 
-	exec('git push --all', (err, stdout, stderr) => {
-		if (err) {
-			console.log('err = ', err);
-			return;
-		}
-		console.log(stdout);
-	});
-}, 1);
+exec('git push --all', (err, stdout, stderr) => {
+	if (err) {
+		console.log('err = ', err);
+		return;
+	}
+	console.log(stdout);
+});
 
 var file = fs.createWriteStream('hist.txt');
 let globalG = 0;
