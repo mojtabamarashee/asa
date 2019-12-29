@@ -1101,7 +1101,7 @@ async function GetHistData() {
 				//console.log('histExist = ', i);
 			}
 		});
-		await axios.all(pr).then(res => console.log(res));
+		await axios.all(pr);
 	}
 }
 GetHistData();
