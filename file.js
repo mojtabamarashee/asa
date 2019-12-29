@@ -1104,7 +1104,7 @@ async function GetHistData() {
 		await axios.all(pr).then(res => console.log(res));
 	}
 }
-GetHistData();
+//GetHistData();
 
 console.log('here');
 console.log('here');
