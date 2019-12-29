@@ -1081,20 +1081,20 @@ let pr = [];
 async function GetHistData() {
 	if (getSymbolsPriceHistFlag) {
 		allRows.forEach((v, i) => {
-			if (v.l18.match(/^([^0-9]*)$/) && !v.pClosingHist) {
+			if (v.l18.match(/^([^0-9]*)$/)) {
 				url = 'http://tsetmc.com/tsev2/chart/data/Financial.aspx?i=' + v.inscode + '&t=ph&a=1';
 				pr.push(
 					axios
 						.get(url)
-						//	.then(response => {
-						//		console.log('histOk = ', i);
-						//		v.pClosingHist = response.data
-						//			.split(';')
-						//			.map(v => v.split(','))
-						//			.map(v => v[6])
-						//			.map(v => Number(v))
-						//			.reverse();
-						//	})
+							.then(response => {
+								console.log('histOk = ', i);
+								v.pClosingHist = response.data
+									.split(';')
+									.map(v => v.split(','))
+									.map(v => v[6])
+									.map(v => Number(v))
+									.reverse();
+							})
 						.catch(error => null),
 				);
 			} else {
@@ -1104,7 +1104,7 @@ async function GetHistData() {
 		await axios.all(pr).then(res => console.log(res));
 	}
 }
-//GetHistData();
+GetHistData();
 
 console.log('here');
 console.log('here');
