@@ -1085,18 +1085,18 @@ if (getSymbolsPriceHistFlag) {
 			pr.push(
 				axios
 					.get(url)
-					.then(response => {
-						console.log('histOk = ', i);
-						v.pClosingHist = response.data
-							.split(';')
-							.map(v => v.split(','))
-							.map(v => v[6])
-							.map(v => Number(v))
-							.reverse();
-					})
-					.catch(function(error) {
-						console.log('histError = ', i);
-					}),
+				//	.then(response => {
+				//		console.log('histOk = ', i);
+				//		v.pClosingHist = response.data
+				//			.split(';')
+				//			.map(v => v.split(','))
+				//			.map(v => v[6])
+				//			.map(v => Number(v))
+				//			.reverse();
+				//	})
+				//	.catch(function(error) {
+				//		console.log('histError = ', i);
+				//	}),
 			);
 		} else {
 			//console.log('histExist = ', i);
