@@ -1104,7 +1104,7 @@ if (getSymbolsPriceHistFlag) {
 	});
 	axios
 		.all(pr)
-		.then(console.log('finish'))
+		.then(()=>console.log('finish'))
 }
 
 console.log('here');
