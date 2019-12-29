@@ -1081,22 +1081,22 @@ let pr = [];
 if (getSymbolsPriceHistFlag) {
 	allRows.forEach((v, i) => {
 		if (v.l18.match(/^([^0-9]*)$/) && !v.pClosingHist) {
-			url = 'http://tsetmc.com/tsev2/chart/data/Financial.aspxx?i=' + v.inscode + '&t=ph&a=1';
+			url = 'http://tsetmc.com/tsev2/chart/data/Financial.aspx?i=' + v.inscode + '&t=ph&a=1';
 			pr.push(
 				axios
 					.get(url)
-					//.then(response => {
-					//	console.log('histOk = ', i);
-					//	v.pClosingHist = response.data
-					//		.split(';')
-					//		.map(v => v.split(','))
-					//		.map(v => v[6])
-					//		.map(v => Number(v))
-					//		.reverse();
-					//})
-					//.catch(function(error) {
-					//	console.log('histError = ', i);
-					//}),
+					.then(response => {
+						console.log('histOk = ', i);
+						v.pClosingHist = response.data
+							.split(';')
+							.map(v => v.split(','))
+							.map(v => v[6])
+							.map(v => Number(v))
+							.reverse();
+					})
+					.catch(function(error) {
+						console.log('histError = ', i);
+					}),
 			);
 		} else {
 			//console.log('histExist = ', i);
@@ -1105,10 +1105,6 @@ if (getSymbolsPriceHistFlag) {
 	axios
 		.all(pr)
 		.then(console.log('finish'))
-		.catch(errors => {
-            console.log("errors = ", errors);
-			// react on errors.
-		});
 }
 
 console.log('here');
