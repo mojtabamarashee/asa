@@ -1085,38 +1085,22 @@ if (getSymbolsPriceHistFlag) {
 			pr.push(
 				axios
 					.get(url)
-					.then(response => {
-						console.log('histOk = ', i);
-						v.pClosingHist = response.data
-							.split(';')
-							.map(v => v.split(','))
-							.map(v => v[6])
-							.map(v => Number(v))
-							.reverse();
-					})
-					.catch(function(error) {
-						console.log('histError = ', i);
-					}),
+					//.then(response => {
+					//	console.log('histOk = ', i);
+					//	v.pClosingHist = response.data
+					//		.split(';')
+					//		.map(v => v.split(','))
+					//		.map(v => v[6])
+					//		.map(v => Number(v))
+					//		.reverse();
+					//})
+					//.catch(function(error) {
+					//	console.log('histError = ', i);
+					//}),
 			);
+		} else {
+			//console.log('histExist = ', i);
 		}
-        else
-        {
-            //console.log('histExist = ', i);
-        }
-		//  axios
-		//    .get(url)
-		//    .then(response => {
-		//      v.pClosingHist = response.data
-		//        .split(';')
-		//        .map(v => v.split(','))
-		//        .map(v => v[6])
-		//        .map(v => Number(v))
-		//        .reverse();
-		//    })
-		//    .catch(function(error) {
-		//      console.log('histError = ', i);
-		//      //fs.appendFile('error.txt', v.l18 + '\n', () => {});
-		//    });
 	});
 	axios
 		.all(pr)
@@ -1126,10 +1110,10 @@ if (getSymbolsPriceHistFlag) {
 		});
 }
 
-console.log("here")
-console.log("here")
-console.log("here")
-console.log("here")
+console.log('here');
+console.log('here');
+console.log('here');
+console.log('here');
 allRows.forEach((v, i) => {
 	if (v.pClosingHist) {
 		max = Math.max(...v.pClosingHist.slice(0, 60));
