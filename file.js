@@ -1080,8 +1080,8 @@ maxPriceCntr = 1;
 let pr = [];
 if (getSymbolsPriceHistFlag) {
 	allRows.forEach((v, i) => {
-		if (v.l18.match(/^([^0-9]*)$/) && !v.pClosingHist && i < 5) {
-			url = 'http://tsetmc.com/tsev2/chart/data/Financial.aspxx?i=' + v.inscode + '&t=ph&a=1';
+		if (v.l18.match(/^([^0-9]*)$/) && !v.pClosingHist) {
+			url = 'http://tsetmc.com/tsev2/chart/data/Financial.aspx?i=' + v.inscode + '&t=ph&a=1';
 			pr.push(
 				axios
 					.get(url)
@@ -1126,6 +1126,10 @@ if (getSymbolsPriceHistFlag) {
 		});
 }
 
+console.log("here")
+console.log("here")
+console.log("here")
+console.log("here")
 allRows.forEach((v, i) => {
 	if (v.pClosingHist) {
 		max = Math.max(...v.pClosingHist.slice(0, 60));
@@ -1207,7 +1211,7 @@ setTimeout(() => {
 		}
 		console.log(stdout);
 	});
-}, 10000);
+}, 1);
 
 var file = fs.createWriteStream('hist.txt');
 let globalG = 0;
