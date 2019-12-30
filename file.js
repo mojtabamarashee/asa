@@ -1182,7 +1182,7 @@ $(document).ready(function() {
 
 	if (commitFlag) {
 
-		exec('git -C ../smojmar.github.io add * ' + date, (err, stdout, stderr) => {
+		exec('git -C ../smojmar.github.io add * ', (err, stdout, stderr) => {
 			if (err) {
 				console.log('err = ', err);
 				return;
