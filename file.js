@@ -1140,8 +1140,14 @@ $(document).ready(function() {
 	});
 	allRows.forEach((v, i) => {
 		if (v.pClosingHist) {
-			max = Math.max(...v.pClosingHist.slice(0, 200));
+
+			max = Math.max(...v.pClosingHist.slice(0, 60));
 			v.mm = numeral(-((max - v.pc) / max) * 100).format();
+
+			if (v.pClosingHist[200]) {
+				max = Math.max(...v.pClosingHist.slice(0, 200));
+				v.mmY = numeral(Math.round(-((max - v.pc) / max) * 100)).format();
+			}
 
 			n = 5;
 			if (v.hist[n]) v.d5 = numeral(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100).format();
@@ -1156,7 +1162,8 @@ $(document).ready(function() {
 			if (v.hist[n]) v.d60 = numeral(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100).format();
 
 			n = 200;
-			if (v.pClosingHist[n]) v.d360 = numeral(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100).format();
+			if (v.pClosingHist[n])
+				v.d360 = numeral(Math.round(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100)).format();
 
 			if (v.l18 == 'وبملت') {
 				console.log('pcl = ', v.pClosingHist[59]);
@@ -1167,8 +1174,7 @@ $(document).ready(function() {
 				v.pClosingHist.forEach(v => {
 					if (v) file.write(v.toString() + ',\n');
 				});
-            }
-
+			}
 
 			v.hist = [];
 			v.per = [];
@@ -1179,7 +1185,7 @@ $(document).ready(function() {
 	allRows.forEach((v, i) => {
 		let rsiAll = [];
 		if (v.pClosingHist && v.pClosingHist[15]) {
-			let data = v.pClosingHist.filter(v=>v).reverse();
+			let data = v.pClosingHist.filter(v => v).reverse();
 			data[data.length] = v.pc;
 			tulind.indicators.rsi.indicator([data], [14], function(err, results) {
 				rsiAll = results[0];
@@ -1197,7 +1203,7 @@ $(document).ready(function() {
 	console.log('save');
 
 	if (commitFlag == 1) {
-        console.log("commitFlag = ", commitFlag);
+		console.log('commitFlag = ', commitFlag);
 		exec('git -C ../smojmar.github.io add * ', (err, stdout, stderr) => {
 			if (err) {
 				console.log('err = ', err);
