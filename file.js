@@ -1135,7 +1135,7 @@ $(document).ready(function() {
 			max = Math.max(...v.pClosingHist.slice(0, 200));
 			v.mm = numeral(-((max - v.pc) / max) * 100).format();
 
-			if (v.l18 == 'شگل') {
+			if (v.l18 == 'جهرم') {
 				console.log('pcl = ', v.pClosingHist[200]);
 				console.log('max = ', max);
 				console.log('mm = ', v.mm);
