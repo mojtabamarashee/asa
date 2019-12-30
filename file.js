@@ -1113,6 +1113,7 @@ $(document).ready(function() {
 								.map(v => v.split(','))
 								.map(v => v[6])
 								.map(v => Number(v))
+								.map(v => Number(v))
 								.reverse();
 						})
 						.catch(error => {
@@ -1130,6 +1131,10 @@ $(document).ready(function() {
 	//GetHistData();
 
 	console.log('hist finish ', testt);
+	var file = fs.createWriteStream('eee.txt');
+	allRows.forEach(v => {
+		if (v.pClosingHist) v.pClosingHist = v.pClosingHist.map(v1 => Number(v1));
+	});
 	allRows.forEach((v, i) => {
 		if (v.pClosingHist) {
 			max = Math.max(...v.pClosingHist.slice(0, 200));
@@ -1140,6 +1145,9 @@ $(document).ready(function() {
 				console.log('max = ', max);
 				console.log('mm = ', v.mm);
 				console.log('pc = ', v.pc);
+				v.pClosingHist.forEach(v => {
+					if (v) file.write(v.toString() + ',\n');
+				});
 			}
 
 			n = 5;
@@ -1163,7 +1171,7 @@ $(document).ready(function() {
 	allRows.forEach((v, i) => {
 		let rsiAll = [];
 		if (v.pClosingHist && v.pClosingHist[15]) {
-			let data = v.pClosingHist.reverse();
+			let data = v.pClosingHist.filter(v=>v).reverse();
 			data[data.length] = v.pc;
 			tulind.indicators.rsi.indicator([data], [14], function(err, results) {
 				rsiAll = results[0];
@@ -1181,7 +1189,6 @@ $(document).ready(function() {
 	console.log('save');
 
 	if (commitFlag) {
-
 		exec('git -C ../smojmar.github.io add * ', (err, stdout, stderr) => {
 			if (err) {
 				console.log('err = ', err);
