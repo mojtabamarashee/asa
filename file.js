@@ -2,7 +2,7 @@ async function main() {
 	date = '98_10_09';
 	let getSymbolsPageFlag = 0;
 	let getSymbolsDataFlag = 1;
-	let getSymbolsPriceHistFlag = 0;
+	let getSymbolsPriceHistFlag = 1;
 	let commitFlag = 1;
 	let sendTelegramFlag = 0;
 	let getHistDataFlag = 0;
@@ -1118,6 +1118,9 @@ $(document).ready(function() {
 						})
 						.catch(error => {
 							histRecvCntr++;
+							if (histRecvCntr == histSendCntr) {
+								res(1);
+							}
 							console.log('histError = ', i);
 						});
 				} else {
@@ -1140,16 +1143,6 @@ $(document).ready(function() {
 			max = Math.max(...v.pClosingHist.slice(0, 200));
 			v.mm = numeral(-((max - v.pc) / max) * 100).format();
 
-			if (v.l18 == 'جهرم') {
-				console.log('pcl = ', v.pClosingHist[200]);
-				console.log('max = ', max);
-				console.log('mm = ', v.mm);
-				console.log('pc = ', v.pc);
-				v.pClosingHist.forEach(v => {
-					if (v) file.write(v.toString() + ',\n');
-				});
-			}
-
 			n = 5;
 			if (v.hist[n]) v.d5 = numeral(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100).format();
 
@@ -1161,6 +1154,21 @@ $(document).ready(function() {
 
 			n = 59;
 			if (v.hist[n]) v.d60 = numeral(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100).format();
+
+			n = 200;
+			if (v.pClosingHist[n]) v.d360 = numeral(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100).format();
+
+			if (v.l18 == 'وبملت') {
+				console.log('pcl = ', v.pClosingHist[59]);
+				console.log('max = ', max);
+				console.log('mm = ', v.mm);
+				console.log('pc = ', v.pc);
+				console.log('d60 = ', v.d60);
+				v.pClosingHist.forEach(v => {
+					if (v) file.write(v.toString() + ',\n');
+				});
+            }
+
 
 			v.hist = [];
 			v.per = [];
@@ -1188,7 +1196,8 @@ $(document).ready(function() {
 	fs.writeFileSync('allRows_' + date + '.js', JSON.stringify(allRows));
 	console.log('save');
 
-	if (commitFlag) {
+	if (commitFlag == 1) {
+        console.log("commitFlag = ", commitFlag);
 		exec('git -C ../smojmar.github.io add * ', (err, stdout, stderr) => {
 			if (err) {
 				console.log('err = ', err);
