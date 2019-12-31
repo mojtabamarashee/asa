@@ -1,11 +1,11 @@
 async function main() {
-	date = '98_10_09';
+	date = '98_10_10';
 	let getSymbolsPageFlag = 0;
 	let getSymbolsDataFlag = 1;
 	let getSymbolsPriceHistFlag = 1;
 	let commitFlag = 1;
 	let sendTelegramFlag = 0;
-	let getHistDataFlag = 0;
+
 	let outPath = '../smojmar.github.io/';
 	const axios = require('axios');
 	var tulind = require('tulind');
@@ -1163,7 +1163,14 @@ $(document).ready(function() {
 
 			n = 200;
 			if (v.pClosingHist[n])
-				v.d360 = numeral(Math.round(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100)).format();
+            {
+                let val = -((v.pClosingHist[n] - v.pc) / v.pClosingHist[n] * 100);
+                if(val > 10 || val < -10)
+                {
+                   val = Math.round(val); 
+                }
+				v.d360 = numeral(val).format();
+            }
 
 			if (v.l18 == 'وبملت') {
 				console.log('pcl = ', v.pClosingHist[59]);
