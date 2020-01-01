@@ -1,10 +1,10 @@
 async function main() {
-	date = '98_10_10';
+	date = '98_10_11';
 	let getSymbolsPageFlag = 0;
 	let getSymbolsDataFlag = 1;
 	let getSymbolsPriceHistFlag = 1;
-	let commitFlag = 1;
-	let sendTelegramFlag = 0;
+	let commitFlag = 0;
+	let sendTelegramFlag = 1;
 
 	let outPath = '../smojmar.github.io/';
 	const axios = require('axios');
@@ -1140,13 +1140,12 @@ $(document).ready(function() {
 	});
 	allRows.forEach((v, i) => {
 		if (v.pClosingHist) {
-
 			max = Math.max(...v.pClosingHist.slice(0, 60));
-			v.mm = numeral(-((max - v.pc) / max) * 100).format();
+			v.pc <= max ? (v.mm = numeral(-((max - v.pc) / max) * 100).format()) : (v.mm = 0);
 
 			if (v.pClosingHist[200]) {
 				max = Math.max(...v.pClosingHist.slice(0, 200));
-				v.mmY = numeral(Math.round(-((max - v.pc) / max) * 100)).format();
+				v.pc <= max ? (v.mmY = numeral(Math.round(-((max - v.pc) / max) * 100)).format()) : (v.mmY = 0);
 			}
 
 			n = 5;
@@ -1162,15 +1161,13 @@ $(document).ready(function() {
 			if (v.hist[n]) v.d60 = numeral(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100).format();
 
 			n = 200;
-			if (v.pClosingHist[n])
-            {
-                let val = -((v.pClosingHist[n] - v.pc) / v.pClosingHist[n] * 100);
-                if(val > 10 || val < -10)
-                {
-                   val = Math.round(val); 
-                }
+			if (v.pClosingHist[n]) {
+				let val = -(((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100);
+				if (val > 10 || val < -10) {
+					val = Math.round(val);
+				}
 				v.d360 = numeral(val).format();
-            }
+			}
 
 			if (v.l18 == 'وبملت') {
 				console.log('pcl = ', v.pClosingHist[59]);
