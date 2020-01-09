@@ -1,5 +1,5 @@
 async function main() {
-	date = '98_10_15';
+	date = '98_10_18';
 	let getSymbolsPageFlag = 0;
 	let getSymbolsDataFlag = 1;
 	let getSymbolsPriceHistFlag = 1;
@@ -13,11 +13,22 @@ async function main() {
 	zlib = require('zlib');
 	const fs = require('fs');
 
-    let YEAR_DAYS = 250;
+	let YEAR_DAYS = 250;
 
 	if (!fs.existsSync(outPath + 'out_' + date)) {
 		fs.mkdirSync(outPath + 'out_' + date);
 	}
+
+
+
+	let SaveAllRows = () => {
+		fs.writeFileSync('../onePage/public/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
+		fs.writeFileSync('../smojmar.github.io/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
+		fs.writeFileSync('allRows_' + date + '.js', JSON.stringify(allRows));
+		console.log('save');
+	};
+
+
 	//let h = GetHistData('27952969918967492');
 	function test() {
 		console.log('salam');
@@ -114,6 +125,11 @@ $(document).ready(function() {
 	} catch (err) {
 		allRows = Object.values(mw1.AllRows);
 	}
+
+	//allRows.forEach(v=>v.ctHist = null);
+	//fs.writeFileSync('../onePage/public/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
+	//fs.writeFileSync('../smojmar.github.io/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
+	//fs.writeFileSync('allRows_' + date + '.js', JSON.stringify(allRows));
 
 	let instHistory = Object.values(mw1.InstHistory);
 	let keys = Object.keys(mw1.InstHistory);
@@ -1100,8 +1116,9 @@ $(document).ready(function() {
 	let testt = [];
 	let histSendCntr = 0;
 	let histRecvCntr = 0;
+	let ctSendCntr = 0;
+	let ctRecvCntr = 0;
 
-	//async function GetHistData() {
 	if (getSymbolsPriceHistFlag) {
 		let HistPr = new Promise((res, rej) => {
 			allRows.forEach((v, i) => {
@@ -1122,6 +1139,7 @@ $(document).ready(function() {
 								.map(v => v[6])
 								.map(v => Number(v))
 								.map(v => Number(v))
+								.slice(0, 300)
 								.reverse();
 
 							v.vHist = response.data
@@ -1130,6 +1148,7 @@ $(document).ready(function() {
 								.map(v => v[5])
 								.map(v => Number(v))
 								.map(v => Number(v))
+								.slice(0, 300)
 								.reverse();
 						})
 						.catch(error => {
@@ -1144,12 +1163,45 @@ $(document).ready(function() {
 				}
 			});
 		});
-		await HistPr;
-	}
-	//}
-	//GetHistData();
 
-	console.log('hist finish ', testt);
+		let CTPr = new Promise((res, rej) => {
+			allRows.forEach((v, i) => {
+				if (v.l18.match(/^([^0-9]*)$/) && !v.ctHist) {
+					url = 'http://tsetmc.com/tsev2/data/clienttype.aspx?i=' + v.inscode;
+					ctSendCntr++;
+					console.log('ctSendCntr = ', ctSendCntr);
+					axios
+						.get(url)
+						.then(response => {
+							ctRecvCntr++;
+							console.log('ctRecvCntr = ', ctRecvCntr);
+							console.log('ctOk = ', i);
+							v.ctHist = response.data.split(';').slice(0, 30);
+                            ctRecvCntr % 200 == 0 ? SaveAllRows() : null
+							if (ctRecvCntr == ctSendCntr) {
+								res(1);
+							}
+						})
+						.catch(error => {
+							ctRecvCntr++;
+							console.log('ctRecvCntr = ', ctRecvCntr);
+							if (ctRecvCntr == ctSendCntr) {
+								res(1);
+							}
+							console.log('ctError = ', i);
+						});
+				} else {
+					//console.log('histExist = ', i);
+				}
+			});
+		});
+
+		await HistPr;
+		console.log('hist finished');
+		await CTPr;
+		console.log('ct finished');
+	}
+
 	var file = fs.createWriteStream('eee.txt');
 	allRows.forEach(v => {
 		if (v.pClosingHist) v.pClosingHist = v.pClosingHist.map(v1 => Number(v1));
@@ -1165,27 +1217,27 @@ $(document).ready(function() {
 			}
 
 			n = 5;
-			if (v.hist[n]) v.d5 = numeral(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100).format();
+			if (v.hist[n]) v.d5 = -((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100;
 			else {
-				v.d5 = 'NaN';
+				v.d5 = 'N';
 			}
 
 			n = 10;
-			if (v.hist[n]) v.d10 = numeral(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100).format();
+			if (v.hist[n]) v.d10 = -((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100;
 			else {
-				v.d10 = 'NaN';
+				v.d10 = 'N';
 			}
 
 			n = 30;
-			if (v.hist[n]) v.d30 = numeral(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100).format();
+			if (v.hist[n]) v.d30 = -((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100;
 			else {
-				v.d30 = 'NaN';
+				v.d30 = 'N';
 			}
 
 			n = 59;
-			if (v.hist[n]) v.d60 = numeral(-((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100).format();
+			if (v.hist[n]) v.d60 = -((v.pClosingHist[n] - v.pc) / v.pClosingHist[n]) * 100;
 			else {
-				v.d60 = 'NaN';
+				v.d60 = 'N';
 			}
 
 			n = YEAR_DAYS;
@@ -1196,7 +1248,7 @@ $(document).ready(function() {
 				}
 				v.d360 = val;
 			} else {
-				v.d360 = 'NaN';
+				v.d360 = 'N';
 			}
 
 			if (v.l18 == 'وبملت') {
@@ -1231,10 +1283,7 @@ $(document).ready(function() {
 
 	const {exec} = require('child_process');
 
-	fs.writeFileSync('../onePage/public/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
-	fs.writeFileSync('../smojmar.github.io/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
-	fs.writeFileSync('allRows_' + date + '.js', JSON.stringify(allRows));
-	console.log('save');
+	SaveAllRows();
 
 	if (commitFlag == 1) {
 		console.log('commitFlag = ', commitFlag);
