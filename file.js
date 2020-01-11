@@ -1,8 +1,8 @@
 async function main() {
-	date = '98_10_18';
+	date = '98_10_21';
 	let getSymbolsPageFlag = 0;
-	let getSymbolsDataFlag = 0;
-	let getSymbolsPriceHistFlag = 0;
+	let getSymbolsDataFlag = 1;
+	let getSymbolsPriceHistFlag = 1;
 	let commitFlag = 0;
 	let sendTelegramFlag = 0;
 
@@ -19,15 +19,12 @@ async function main() {
 		fs.mkdirSync(outPath + 'out_' + date);
 	}
 
-
-
 	let SaveAllRows = () => {
 		fs.writeFileSync('../onePage/public/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
 		fs.writeFileSync('../smojmar.github.io/allRows_' + date + '.js', 'allRows=' + JSON.stringify(allRows));
 		fs.writeFileSync('allRows_' + date + '.js', JSON.stringify(allRows));
 		console.log('save');
 	};
-
 
 	//let h = GetHistData('27952969918967492');
 	function test() {
@@ -1139,7 +1136,6 @@ $(document).ready(function() {
 								.map(v => v[6])
 								.map(v => Number(v))
 								.map(v => Number(v))
-								.slice(0, 300)
 								.reverse();
 
 							v.vHist = response.data
@@ -1148,7 +1144,6 @@ $(document).ready(function() {
 								.map(v => v[5])
 								.map(v => Number(v))
 								.map(v => Number(v))
-								.slice(0, 300)
 								.reverse();
 						})
 						.catch(error => {
@@ -1169,15 +1164,13 @@ $(document).ready(function() {
 				if (v.l18.match(/^([^0-9]*)$/) && !v.ctHist) {
 					url = 'http://tsetmc.com/tsev2/data/clienttype.aspx?i=' + v.inscode;
 					ctSendCntr++;
-					console.log('ctSendCntr = ', ctSendCntr);
 					axios
 						.get(url)
 						.then(response => {
 							ctRecvCntr++;
-							console.log('ctRecvCntr = ', ctRecvCntr);
 							console.log('ctOk = ', i);
 							v.ctHist = response.data.split(';').slice(0, 30);
-                            ctRecvCntr % 200 == 0 ? SaveAllRows() : null
+							ctRecvCntr % 50 == 0 ? SaveAllRows() : null;
 							if (ctRecvCntr == ctSendCntr) {
 								res(1);
 							}
