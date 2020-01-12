@@ -1,5 +1,5 @@
 async function main() {
-	date = '98_10_21';
+	date = '98_10_22';
 	let getSymbolsPageFlag = 0;
 	let getSymbolsDataFlag = 1;
 	let getSymbolsPriceHistFlag = 1;
