@@ -1,8 +1,8 @@
 async function main() {
-	date = '98_10_24';
+	date = '98_10_25';
 	let getSymbolsPageFlag = 0;
 	let getSymbolsDataFlag = 1;
-	let getSymbolsPriceHistFlag = 0;
+	let getSymbolsPriceHistFlag = 1;
 	let commitFlag = 0;
 	let sendTelegramFlag = 0;
 
