@@ -1,10 +1,10 @@
 async function main() {
-	date = '98_10_25';
+	date = '98_10_30';
 	let getSymbolsPageFlag = 0;
-	let getSymbolsDataFlag = 1;
-	let getSymbolsPriceHistFlag = 1;
+	let getSymbolsDataFlag = 0;
+	let getSymbolsPriceHistFlag = 0;
 	let commitFlag = 0;
-	let sendTelegramFlag = 0;
+	let sendTelegramFlag = 1;
 
 	let outPath = '../smojmar.github.io/';
 	const axios = require('axios');
