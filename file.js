@@ -1,10 +1,10 @@
 async function main() {
-	date = '98_10_30';
+	date = '98_11_01';
 	let getSymbolsPageFlag = 0;
-	let getSymbolsDataFlag = 0;
-	let getSymbolsPriceHistFlag = 0;
+	let getSymbolsDataFlag = 1;
+	let getSymbolsPriceHistFlag = 1;
 	let commitFlag = 0;
-	let sendTelegramFlag = 1;
+	let sendTelegramFlag = 0;
 
 	let outPath = '../smojmar.github.io/';
 	const axios = require('axios');
@@ -629,8 +629,12 @@ $(document).ready(function() {
 	allRows.forEach((v, i) => {
 		v.name = v.l18
 			.toString()
-			.replace('ي', 'ی')
-			.replace('ك', 'ک');
+			.replace('/ي/g', 'ی')
+			.replace('/ك/g', 'ک');
+		v.nameFull = v.l30
+			.toString()
+			.replace('/ي/g', 'ی')
+			.replace('/ك/g', 'ک');
 	});
 
 	let ready = 1;
