@@ -1,8 +1,8 @@
 async function main() {
-	date = '98_11_01';
+	date = '98_11_02';
 	let getSymbolsPageFlag = 0;
 	let getSymbolsDataFlag = 1;
-	let getSymbolsPriceHistFlag = 1;
+	let getSymbolsPriceHistFlag = 0;
 	let commitFlag = 0;
 	let sendTelegramFlag = 0;
 
@@ -629,12 +629,20 @@ $(document).ready(function() {
 	allRows.forEach((v, i) => {
 		v.name = v.l18
 			.toString()
-			.replace('/ي/g', 'ی')
-			.replace('/ك/g', 'ک');
+			.replace('ي', 'ی')
+			.replace('ي', 'ی')
+			.replace('ي', 'ی')
+			.replace('ك', 'ک')
+			.replace('ك', 'ک')
+			.replace('ك', 'ک');
 		v.nameFull = v.l30
 			.toString()
-			.replace('/ي/g', 'ی')
-			.replace('/ك/g', 'ک');
+			.replace('ي', 'ی')
+			.replace('ي', 'ی')
+			.replace('ي', 'ی')
+			.replace('ك', 'ک')
+			.replace('ك', 'ک')
+			.replace('ك', 'ک');
 	});
 
 	let ready = 1;
